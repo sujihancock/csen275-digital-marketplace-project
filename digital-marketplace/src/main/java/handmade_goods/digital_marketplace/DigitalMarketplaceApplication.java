@@ -1,4 +1,4 @@
-package com.handmade_goods.digital_marketplace;
+package handmade_goods.digital_marketplace;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
