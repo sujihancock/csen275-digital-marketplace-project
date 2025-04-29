@@ -1,15 +1,22 @@
+package handmade_goods.digital_marketplace.model;
+
 import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "orders")
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String orderDate;
     private Long buyerId;
     private Long sellerId;
     private int totalPrice;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     
     public enum OrderStatus {
         PENDING,
@@ -21,14 +28,18 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @ManytoMany
+    @JoinTable(
+            name = "products_in_order",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
     private List<Product> products;
 
     // Constructors
     public Order() {
     }
 
-    public Order(String orderDate, String status, Long buyerId, Long sellerId) {
+    public Order(String orderDate, OrderStatus status, Long buyerId, Long sellerId) {
         this.orderDate = orderDate;
         this.status = status;
         this.buyerId = buyerId;
@@ -119,15 +130,11 @@ public class Order {
         totalPrice = 0;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public String getOrderStatus() {
-        return orderStatus;
-    }
-
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 }

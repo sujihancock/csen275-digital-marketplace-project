@@ -1,10 +1,13 @@
+package handmade_goods.digital_marketplace.model;
+
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "product")
+@Table(name = "products")
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,7 +35,7 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "products", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>(); 
 
     // Constructors

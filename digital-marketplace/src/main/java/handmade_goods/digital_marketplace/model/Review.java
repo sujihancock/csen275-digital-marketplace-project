@@ -1,22 +1,23 @@
-import javax.persistence.*;
+package handmade_goods.digital_marketplace.model;
+
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "review")
+@Table(name = "reviews")
 public class Review {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     private String comment;
-    
     private Double rating;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "buyer_id")
+    @JoinColumn(name = "buyer_id", referencedColumnName = "id")
     private Buyer buyer;
 
     // Constructors

@@ -1,8 +1,12 @@
+package handmade_goods.digital_marketplace.model;
+
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "buyer")
+@Table(name = "buyers")
+@PrimaryKeyJoinColumn(name = "user_id")
 public class Buyer extends User {
+
     public Buyer() {
     }
 
