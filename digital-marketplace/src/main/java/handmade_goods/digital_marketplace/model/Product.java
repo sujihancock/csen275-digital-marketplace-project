@@ -35,8 +35,8 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
 
-    @OneToMany(mappedBy = "products", cascade = CascadeType.ALL)
-    private List<Review> reviews = new ArrayList<>(); 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList<>();
 
     // Constructors
     public Product() {

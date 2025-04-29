@@ -1,5 +1,6 @@
 package handmade_goods.digital_marketplace.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 
@@ -28,12 +29,14 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    @ManyToMany
     @JoinTable(
             name = "products_in_order",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
+
 
     // Constructors
     public Order() {
