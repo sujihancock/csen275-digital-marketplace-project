@@ -2,8 +2,11 @@ package handmade_goods.digital_marketplace.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "reviews")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Review {
 
     @Id
@@ -11,10 +14,11 @@ public class Review {
     private Long id;
     private String comment;
     private Double rating;
+    private LocalDateTime date;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
-    private Product product;
+//    @ManyToOne
+//    @JoinColumn(name = "product_id", referencedColumnName = "id")
+//    private Product product;
 
     @ManyToOne
     @JoinColumn(name = "buyer_id", referencedColumnName = "id")
@@ -24,12 +28,21 @@ public class Review {
     public Review() {
     }
 
-    public Review(Product product, Buyer buyer, String comment, Double rating) {
-        this.product = product;
-        this.buyer = buyer;
+    public Review(Long id, String comment, Double rating, Buyer buyer, LocalDateTime date) {
+        this.id = id;
         this.comment = comment;
         this.rating = rating;
+        this.buyer = buyer;
+        this.date = date;
     }
+
+
+    //    public Review(Product product, Buyer buyer, String comment, Double rating) {
+//        this.product = product;
+//        this.buyer = buyer;
+//        this.comment = comment;
+//        this.rating = rating;
+//    }
     
     // Getters and Setters
     public Long getId() {
@@ -56,13 +69,13 @@ public class Review {
         this.rating = rating;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+//    public Product getProduct() {
+//        return product;
+//    }
+//
+//    public void setProduct(Product product) {
+//        this.product = product;
+//    }
 
     public Buyer getBuyer() {
         return buyer;
@@ -72,13 +85,21 @@ public class Review {
         this.buyer = buyer;
     }
 
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
         return "Review{" +
                 "id=" + id +
                 ", comment='" + comment + '\'' +
                 ", rating=" + rating +
-                ", product=" + product +
+                ", date=" + date +
                 ", buyer=" + buyer +
                 '}';
     }

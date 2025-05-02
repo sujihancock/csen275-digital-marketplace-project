@@ -9,8 +9,12 @@ public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long paymentId;
-    private Long orderId;
+    private Long id;
+    
+    @OneToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private Order order;
+
     private String transactionId;
     private Double amount;
     private LocalDateTime paymentDate;
@@ -39,28 +43,28 @@ public class Payment {
     public Payment() {
     }
 
-    public Payment(Long orderId, PaymentMethod paymentMethod, PaymentStatus paymentStatus, String transactionId) {
-        this.orderId = orderId;
+    public Payment(Order order, PaymentMethod paymentMethod, PaymentStatus paymentStatus, String transactionId) {
+        this.order = order;
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
         this.transactionId = transactionId;
     }
 
     // Getters and Setters
-    public Long getPaymentId() {
-        return paymentId;
+    public Long getid() {
+        return id;
     }
 
-    public void setPaymentId(Long paymentId) {
-        this.paymentId = paymentId;
+    public void setid(Long id) {
+        this.id = id;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public PaymentMethod getPaymentMethod() {
@@ -106,8 +110,8 @@ public class Payment {
     @Override
     public String toString() {
         return "Payment{" +
-                "paymentId=" + paymentId +
-                ", orderId=" + orderId +
+                "id=" + id +
+                ", order=" + order +
                 ", paymentMethod=" + paymentMethod +
                 ", paymentStatus=" + paymentStatus +
                 ", transactionId='" + transactionId + '\'' +
