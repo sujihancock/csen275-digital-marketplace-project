@@ -1,5 +1,6 @@
 package handmade_goods.digital_marketplace.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
@@ -11,10 +12,8 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String orderDate;
-    private Long buyerId;
-    private Long sellerId;
-    private int totalPrice;
+    private LocalDateTime date;
+    private double amount = 0.0;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -26,10 +25,7 @@ public class Order {
         CANCELLED
     }
 
-    @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
-
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "products_in_order",
             joinColumns = @JoinColumn(name = "order_id"),
@@ -37,16 +33,19 @@ public class Order {
     )
     private List<Product> products = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "buyer_id", referencedColumnName = "id")
+    private Buyer buyer;
+
 
     // Constructors
     public Order() {
     }
 
-    public Order(String orderDate, OrderStatus status, Long buyerId, Long sellerId) {
-        this.orderDate = orderDate;
+    public Order(LocalDateTime date, OrderStatus status, Buyer buyer) {
+        this.date = date;
         this.status = status;
-        this.buyerId = buyerId;
-        this.sellerId = sellerId;
+        this.buyer = buyer;
     }
 
     // Getters and Setters
@@ -58,56 +57,48 @@ public class Order {
         this.id = id;
     }
 
-    public String getOrderDate() {
-        return orderDate;
+    public LocalDateTime getDate() {
+        return date;
     }
 
-    public void setOrderDate(String orderDate) {
-        this.orderDate = orderDate;
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
-    public Long getBuyerId() {
-        return buyerId;
+    public Buyer getBuyer() {
+        return buyer;
     }
 
-    public void setBuyerId(Long buyerId) {
-        this.buyerId = buyerId;
-    }
-
-    public Long getSellerId() {
-        return sellerId;
-    }
-
-    public void setSellerId(Long sellerId) {
-        this.sellerId = sellerId;
+    public void setBuyer(Buyer buyer) {
+        this.buyer = buyer;
     }
 
     @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", orderDate='" + orderDate + '\'' +
-                ", status='" + status + '\'' +
-                ", buyerId=" + buyerId +
-                ", sellerId=" + sellerId +
+                ", date='" + date + '\'' +
+                ", amount=" + amount +
+                ", status=" + status +
+                ", buyer=" + buyer +
                 '}';
     }
 
-    public void calculateTotalPrice() {
-        totalPrice = 0;
+    private void calculateamount() {
+        amount = 0;
         if (products != null) {
             for (Product product : products) {
-                totalPrice += product.getPrice();
+                amount += product.getPrice();
             }
         }
     }
 
-    public int getTotalPrice() {
-        return totalPrice;
+    public double getamount() {
+        return amount;
     }
 
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setamount(double amount) {
+        this.amount = amount;
     }
 
     public List<Product> getProducts() {
@@ -116,28 +107,29 @@ public class Order {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+        calculateamount();
     }
 
     public void addProduct(Product product) {
         products.add(product);
-        calculateTotalPrice();
+        amount += product.getPrice();
     }
 
     public void removeProduct(Product product) {
         products.remove(product);
-        calculateTotalPrice();
+        amount -= product.getPrice();
     }
 
     public void clearProducts() {
         products.clear();
-        totalPrice = 0;
+        amount = 0;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public OrderStatus getStatus() {
+        return status;
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 }

@@ -14,7 +14,6 @@ public class Product {
     private String name;
     private String description;
     private Double price;
-    private Long sellerId;
     private String imageUrl;
 
     public enum ProductCategory {
@@ -35,19 +34,23 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<Review> reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ProductReview> reviews = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id", referencedColumnName = "id")
+    private Seller seller;
+
 
     // Constructors
     public Product() {
     }
 
-    public Product(String name, String description, Double price, Long sellerId, 
-    String imageUrl, ProductCategory category) {
+    public Product(String name, String description, Double price, Seller seller, String imageUrl, ProductCategory category) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.sellerId = sellerId;
+        this.seller = seller;
         this.imageUrl = imageUrl;
         this.category = category;
     }
@@ -85,12 +88,12 @@ public class Product {
         this.price = price;
     }
 
-    public Long getSellerId() {
-        return sellerId;
+    public Seller getSeller() {
+        return seller;
     }
 
-    public void setSellerId(Long sellerId) {
-        this.sellerId = sellerId;
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
 
     @Override
@@ -100,7 +103,7 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
-                ", sellerId=" + sellerId +
+                ", seller=" + seller +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", category=" + category +
                 '}';
@@ -123,11 +126,15 @@ public class Product {
         this.category = category;
     }
     
-    public List<Review> getReviews() {
+    public List<ProductReview> getReviews() {
         return reviews;
     }
 
-    public void setReviews(List<Review> reviews) {
+    public void setReviews(List<ProductReview> reviews) {
         this.reviews = reviews;
+    }
+
+    public void addReview(ProductReview review) {
+        this.reviews.add(review);
     }
 }
