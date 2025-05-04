@@ -18,4 +18,9 @@ public class UserController {
         this.userService = userService;
         this.httpSession = httpSession;
     }
+
+    @GetMapping
+    public String getUser() {
+        return "User endpoint is working!";
+    }
 }
