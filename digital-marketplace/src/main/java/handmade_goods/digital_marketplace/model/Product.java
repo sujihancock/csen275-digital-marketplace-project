@@ -38,7 +38,7 @@ public class Product {
     private List<ProductReview> reviews = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "seller_id", referencedColumnName = "id")
+    @JoinColumn(name = "seller_id", referencedColumnName = "user_id")
     private Seller seller;
 
 
