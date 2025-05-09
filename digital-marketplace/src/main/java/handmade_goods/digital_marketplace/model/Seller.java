@@ -1,4 +1,5 @@
 package handmade_goods.digital_marketplace.model;
+
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

@@ -21,6 +21,14 @@ public class UserService {
         return userRepository.findByUsernameAndPassword(username, password);
     }
 
+    public Optional<User> getByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public Optional<User> getByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     public Optional<User> getById(Long id) {
         return userRepository.findById(id);
     }

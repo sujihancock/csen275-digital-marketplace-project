@@ -34,7 +34,7 @@ public class Order {
     private List<Product> products = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "buyer_id", referencedColumnName = "id")
+    @JoinColumn(name = "buyer_id", referencedColumnName = "user_id")
     private Buyer buyer;
 
 
@@ -84,7 +84,7 @@ public class Order {
                 '}';
     }
 
-    private void calculateamount() {
+    private void calculateAmount() {
         amount = 0;
         if (products != null) {
             for (Product product : products) {
@@ -93,11 +93,11 @@ public class Order {
         }
     }
 
-    public double getamount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setamount(double amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -107,7 +107,7 @@ public class Order {
 
     public void setProducts(List<Product> products) {
         this.products = products;
-        calculateamount();
+        calculateAmount();
     }
 
     public void addProduct(Product product) {

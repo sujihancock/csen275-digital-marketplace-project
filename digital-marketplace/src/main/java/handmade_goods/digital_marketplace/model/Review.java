@@ -4,10 +4,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "reviews")
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Review {
+@MappedSuperclass
+public abstract class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,35 +14,21 @@ public class Review {
     private Double rating;
     private LocalDateTime date;
 
-//    @ManyToOne
-//    @JoinColumn(name = "product_id", referencedColumnName = "id")
-//    private Product product;
-
     @ManyToOne
-    @JoinColumn(name = "buyer_id", referencedColumnName = "id")
+    @JoinColumn(name = "buyer_id", referencedColumnName = "user_id")
     private Buyer buyer;
 
-    // Constructors
     public Review() {
     }
 
-    public Review(Long id, String comment, Double rating, Buyer buyer, LocalDateTime date) {
+    public Review(Long id, String comment, Double rating, LocalDateTime date, Buyer buyer) {
         this.id = id;
         this.comment = comment;
         this.rating = rating;
-        this.buyer = buyer;
         this.date = date;
+        this.buyer = buyer;
     }
 
-
-    //    public Review(Product product, Buyer buyer, String comment, Double rating) {
-//        this.product = product;
-//        this.buyer = buyer;
-//        this.comment = comment;
-//        this.rating = rating;
-//    }
-    
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -69,22 +53,6 @@ public class Review {
         this.rating = rating;
     }
 
-//    public Product getProduct() {
-//        return product;
-//    }
-//
-//    public void setProduct(Product product) {
-//        this.product = product;
-//    }
-
-    public Buyer getBuyer() {
-        return buyer;
-    }
-
-    public void setBuyer(Buyer buyer) {
-        this.buyer = buyer;
-    }
-
     public LocalDateTime getDate() {
         return date;
     }
@@ -93,14 +61,11 @@ public class Review {
         this.date = date;
     }
 
-    @Override
-    public String toString() {
-        return "Review{" +
-                "id=" + id +
-                ", comment='" + comment + '\'' +
-                ", rating=" + rating +
-                ", date=" + date +
-                ", buyer=" + buyer +
-                '}';
+    public Buyer getBuyer() {
+        return buyer;
+    }
+
+    public void setBuyer(Buyer buyer) {
+        this.buyer = buyer;
     }
 }

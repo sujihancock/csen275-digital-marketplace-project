@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "product_reviews")
-@PrimaryKeyJoinColumn(name = "review_id")
 public class ProductReview extends Review {
 
     @ManyToOne
@@ -17,7 +16,7 @@ public class ProductReview extends Review {
     }
 
     public ProductReview(Long id, String comment, Double rating, Buyer buyer, Product product, LocalDateTime date) {
-        super(id, comment, rating, buyer, date);
+        super(id, comment, rating, date, buyer);
         this.product = product;
     }
 
