@@ -88,7 +88,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/logout")
-    public ResponseEntity<Map<String, String>> logout(@RequestParam String username) {
+    public ResponseEntity<Map<String, String>> logout() {
         if (httpSession.getAttribute("user") == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("status", "error"
