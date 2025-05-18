@@ -71,13 +71,6 @@ public class UserController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {
-        User user = (User) httpSession.getAttribute("user");
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("status", "error",
-                            "message", "not logged in"));
-        }
-
         Optional<User> searchResult = userService.getById(id);
         if (searchResult.isPresent()) {
             return ResponseEntity.ok(searchResult.get());
@@ -89,12 +82,6 @@ public class UserController {
 
     @PostMapping(path = "/logout")
     public ResponseEntity<Map<String, String>> logout() {
-        if (httpSession.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("status", "error"
-                            , "message", "not logged in"));
-        }
-
         httpSession.removeAttribute("user");
         return ResponseEntity.ok(Map.of("status", "success",
                 "message", "logged out"));
