@@ -1,10 +1,7 @@
-package handmade_goods.digital_marketplace.repository;
+package handmade_goods.digital_marketplace.repository.user;
 
-import handmade_goods.digital_marketplace.model.Buyer;
-import jakarta.transaction.Transactional;
+import handmade_goods.digital_marketplace.model.user.Buyer;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

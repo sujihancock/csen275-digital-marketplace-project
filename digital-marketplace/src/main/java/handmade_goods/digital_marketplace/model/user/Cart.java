@@ -1,4 +1,6 @@
-package handmade_goods.digital_marketplace.model;
+package handmade_goods.digital_marketplace.model.user;
+
+import handmade_goods.digital_marketplace.model.product.Product;
 
 import java.util.HashMap;
 import java.util.Map;

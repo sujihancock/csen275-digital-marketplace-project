@@ -1,6 +1,7 @@
-package handmade_goods.digital_marketplace.model;
+package handmade_goods.digital_marketplace.model.order;
 
 import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 
 @Entity

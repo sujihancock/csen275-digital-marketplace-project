@@ -1,5 +1,6 @@
-package handmade_goods.digital_marketplace.model;
+package handmade_goods.digital_marketplace.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,8 +17,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+    @JsonIgnore
     private String password;
     private String email;
+
+    public record Summary(Long id, String username) {
+    }
 
     // Constructors
     public User() {
@@ -69,5 +74,9 @@ public class User {
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public Summary summarize() {
+        return new Summary(id, username);
     }
 }

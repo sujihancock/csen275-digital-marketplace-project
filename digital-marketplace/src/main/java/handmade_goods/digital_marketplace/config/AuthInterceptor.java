@@ -7,6 +7,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.time.Instant;
+
 @Component
 public class AuthInterceptor  implements HandlerInterceptor {
     @Override
@@ -21,7 +23,7 @@ public class AuthInterceptor  implements HandlerInterceptor {
         if (session == null || session.getAttribute("user") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-            response.getWriter().write("{\"status\":\"error\",\"message\":\"Not logged in\"}");
+            response.getWriter().write("{\"status\":\"error\",\"message\":\"not logged in\",\"timestamp\":\"" + Instant.now().toString() + "\"}}");
             return false;
         }
 
