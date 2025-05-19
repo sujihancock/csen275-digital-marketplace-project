@@ -1,11 +1,8 @@
 package handmade_goods.digital_marketplace.payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import handmade_goods.digital_marketplace.model.review.Review;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.function.Supplier;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
