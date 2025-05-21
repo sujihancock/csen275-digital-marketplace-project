@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { users } from './services/api';
 
 function Signin() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        setMessage(`Signed in as ${username}`);
+        try {
+            const response = await users.login(username, password);
+            setMessage(`Signed in as ${username}`);
+        } catch (error) {
+            setMessage(error.response && error.response.status === 401 ? error.response.data["message"] : "unexpected error during login");
+        }
     }
 
     return (
@@ -32,6 +38,6 @@ function Signin() {
             {message && <p>{message}</p>}
         </form>
     )
-};
+}
 
 export default Signin;
