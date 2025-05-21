@@ -16,4 +16,12 @@ export const products = {
     getById: (id) => api.get(`/products/${id}`),
 };
 
+// Users API
+export const users = {
+    login: (username, password) => api.post('/users/login', { username, password }),
+    signup: (type) => api.post(`/users/signup/${type}`),
+    getById: (id) => api.get(`/users/${id}`),
+    logout: () => api.post(`/users/logout`),
+};
+
 export default api; 
