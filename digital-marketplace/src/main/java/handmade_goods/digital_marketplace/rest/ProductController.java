@@ -1,10 +1,7 @@
 package handmade_goods.digital_marketplace.rest;
 
-import handmade_goods.digital_marketplace.model.product.AddRequest;
 import handmade_goods.digital_marketplace.model.product.Product;
 import handmade_goods.digital_marketplace.model.product.SearchRequest;
-import handmade_goods.digital_marketplace.model.user.Seller;
-import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
 import handmade_goods.digital_marketplace.service.ProductService;
 import handmade_goods.digital_marketplace.service.UserService;

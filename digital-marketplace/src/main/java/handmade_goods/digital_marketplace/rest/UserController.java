@@ -6,7 +6,6 @@ import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
 import handmade_goods.digital_marketplace.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +35,8 @@ public class UserController {
                 }).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("incorrect username or password")));
     }
 
-    @PostMapping(path = "/signup/{userType}")
-    public ResponseEntity<ApiResponse<String>> signup(@PathVariable String userType, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
+    @PostMapping(path = "/signup/{type}")
+    public ResponseEntity<ApiResponse<String>> signup(@PathVariable String type, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
         if (userService.isEmailTaken(email)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("email already in use"));
         }
@@ -47,7 +46,7 @@ public class UserController {
         }
 
         User user;
-        switch (userType) {
+        switch (type) {
             case "buyer":
                 user = new Buyer(username, password, email);
                 break;
@@ -59,7 +58,7 @@ public class UserController {
         }
 
         userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userType + " created"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(type + " created"));
     }
 
     @GetMapping(path = "/{id}")
@@ -71,6 +70,6 @@ public class UserController {
     @PostMapping(path = "/logout")
     public ResponseEntity<ApiResponse<String>> logout() {
         httpSession.removeAttribute("user");
-        return ResponseEntity.ok(ApiResponse.success("logged out"));
+        return ResponseEntity.ok(ApiResponse.success("user logged out"));
     }
 }

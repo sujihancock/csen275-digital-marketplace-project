@@ -1,18 +1,14 @@
 package handmade_goods.digital_marketplace.rest;
 
 import handmade_goods.digital_marketplace.model.product.AddRequest;
-import handmade_goods.digital_marketplace.model.review.Review;
-import handmade_goods.digital_marketplace.model.review.SellerReview;
 import handmade_goods.digital_marketplace.model.user.Seller;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
 import handmade_goods.digital_marketplace.service.SellerService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
