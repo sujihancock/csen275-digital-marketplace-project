@@ -1,5 +1,6 @@
 package handmade_goods.digital_marketplace.service;
 
+import handmade_goods.digital_marketplace.model.user.LoginRequest;
 import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Optional<User> getByLoginCredentials(String username, String password) {
-        return userRepository.findByUsernameAndPassword(username, password);
+    public Optional<User> getByLoginCredentials(LoginRequest loginRequest) {
+        return userRepository.findByUsernameAndPassword(loginRequest.username(), loginRequest.password());
     }
 
     public Optional<User> getByEmail(String email) {

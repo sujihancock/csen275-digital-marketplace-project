@@ -1,6 +1,7 @@
 package handmade_goods.digital_marketplace.rest;
 
 import handmade_goods.digital_marketplace.model.user.Buyer;
+import handmade_goods.digital_marketplace.model.user.LoginRequest;
 import handmade_goods.digital_marketplace.model.user.Seller;
 import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
@@ -27,8 +28,8 @@ public class UserController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestParam String username, @RequestParam String password) {
-        return userService.getByLoginCredentials(username, password)
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest loginRequest) {
+        return userService.getByLoginCredentials(loginRequest)
                 .map(user -> {
                     httpSession.setAttribute("user", user);
                     return ResponseEntity.ok(ApiResponse.success("user logged in"));
