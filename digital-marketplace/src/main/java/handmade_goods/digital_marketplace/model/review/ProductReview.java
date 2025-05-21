@@ -18,7 +18,7 @@ public class ProductReview extends Review {
     public ProductReview() {
     }
 
-    public ProductReview(Long id, String comment, Double rating, User reviewer, Product product, LocalDateTime date) {
+    public ProductReview(Long id, String comment, Double rating, Buyer reviewer, Product product, LocalDateTime date) {
         super(id, comment, rating, date, reviewer);
         this.product = product;
     }

@@ -6,7 +6,10 @@ import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
 import handmade_goods.digital_marketplace.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -25,22 +28,22 @@ public class UserController {
     }
 
     @PostMapping(path = "/login")
-    public ApiResponse<String> login(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<ApiResponse<String>> login(@RequestParam String username, @RequestParam String password) {
         return userService.getByLoginCredentials(username, password)
                 .map(user -> {
                     httpSession.setAttribute("user", user);
-                    return ApiResponse.success("user logged in");
-                }).orElseGet(() -> ApiResponse.error("incorrect username or password"));
+                    return ResponseEntity.ok(ApiResponse.success("user logged in"));
+                }).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("incorrect username or password")));
     }
 
     @PostMapping(path = "/signup/{userType}")
-    public ApiResponse<String> signup(@PathVariable String userType, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<ApiResponse<String>> signup(@PathVariable String userType, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
         if (userService.isEmailTaken(email)) {
-            return ApiResponse.error("email already in use");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("email already in use"));
         }
 
         if (userService.isUsernameTaken(username)) {
-            return ApiResponse.error("username already in use");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("username already in use"));
         }
 
         User user;
@@ -52,22 +55,22 @@ public class UserController {
                 user = new Seller(username, password, email);
                 break;
             default:
-                return ApiResponse.error("page not found");
+                return ResponseEntity.badRequest().body(ApiResponse.error("page not found"));
         }
 
         userService.save(user);
-        return ApiResponse.success(userType + " created");
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userType + " created"));
     }
 
     @GetMapping(path = "/{id}")
-    public ApiResponse<?> getUser(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<?>> getUser(@PathVariable Long id) {
         Optional<User> user = userService.getById(id);
-        return user.isPresent() ? ApiResponse.success(user.get()) : ApiResponse.error("user not found");
+        return user.<ResponseEntity<ApiResponse<?>>>map(value -> ResponseEntity.ok(ApiResponse.success(value))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("user not found")));
     }
 
     @PostMapping(path = "/logout")
-    public ApiResponse<String> logout() {
+    public ResponseEntity<ApiResponse<String>> logout() {
         httpSession.removeAttribute("user");
-        return ApiResponse.success("logged out");
+        return ResponseEntity.ok(ApiResponse.success("logged out"));
     }
 }

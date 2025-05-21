@@ -18,7 +18,7 @@ public abstract class Review {
 
     @ManyToOne
     @JoinColumn(name = "buyer_id", referencedColumnName = "user_id")
-    private User reviewer;
+    private Buyer reviewer;
 
     public record Dto(Long id, String comment, Double rating, LocalDateTime date, User.Summary reviewer) {
     }
@@ -26,7 +26,7 @@ public abstract class Review {
     public Review() {
     }
 
-    public Review(Long id, String comment, Double rating, LocalDateTime date, User reviewer) {
+    public Review(Long id, String comment, Double rating, LocalDateTime date, Buyer reviewer) {
         this.id = id;
         this.comment = comment;
         this.rating = rating;
@@ -66,11 +66,11 @@ public abstract class Review {
         this.date = date;
     }
 
-    public User getReviewer() {
+    public Buyer getReviewer() {
         return reviewer;
     }
 
-    public void setBuyer(User reviewer) {
+    public void setReviewer(Buyer reviewer) {
         this.reviewer = reviewer;
     }
 

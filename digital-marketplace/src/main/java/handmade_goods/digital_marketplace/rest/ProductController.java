@@ -9,6 +9,8 @@ import handmade_goods.digital_marketplace.payload.ApiResponse;
 import handmade_goods.digital_marketplace.service.ProductService;
 import handmade_goods.digital_marketplace.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,13 +30,13 @@ public class ProductController {
     }
 
     @GetMapping(path = "/search")
-    public ApiResponse<List<Product.Summary>> search(@RequestBody SearchRequest searchRequest) {
-        return ApiResponse.success(productService.search(searchRequest));
+    public ResponseEntity<ApiResponse<List<Product.Summary>>> search(@RequestBody SearchRequest searchRequest) {
+        return ResponseEntity.ok(ApiResponse.success(productService.search(searchRequest)));
     }
 
     @GetMapping(path = "/{id}")
-    public ApiResponse<?> view(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<?>> view(@PathVariable Long id) {
         Product.Dto productDto = productService.findById(id);
-        return productDto != null ? ApiResponse.success(productDto) : ApiResponse.error("Product with ID: " + id + " not found");
+        return productDto != null ? ResponseEntity.ok(ApiResponse.success(productDto)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found"));
     }
 }
