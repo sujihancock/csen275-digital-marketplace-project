@@ -1,5 +1,8 @@
-package handmade_goods.digital_marketplace.model;
+package handmade_goods.digital_marketplace.model.user;
 
+import handmade_goods.digital_marketplace.model.order.Order;
+import handmade_goods.digital_marketplace.model.product.Product;
+import handmade_goods.digital_marketplace.model.review.Review;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -15,6 +18,9 @@ public class Buyer extends User {
 
     @Transient
     private Cart cart = new Cart();
+
+//    public record Dto(Long id, String username, String email, List<Review.Dto> reviews, List<Product.Summary> products) {
+//    }
 
     public Buyer() {
     }

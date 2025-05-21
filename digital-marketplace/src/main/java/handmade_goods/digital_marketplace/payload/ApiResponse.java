@@ -1,6 +1,7 @@
 package handmade_goods.digital_marketplace.payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -29,7 +30,11 @@ public class ApiResponse<T> {
         return new ApiResponse<>("success", data, message);
     }
 
-    public static <T> ApiResponse<T> error(String message) {
+    public static ApiResponse<String> success(String message) {
+        return new ApiResponse<>("success", null, message);
+    }
+
+    public static ApiResponse<String> error(String message) {
         return new ApiResponse<>("error", null, message);
     }
 
@@ -65,4 +70,4 @@ public class ApiResponse<T> {
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
-} 
+}

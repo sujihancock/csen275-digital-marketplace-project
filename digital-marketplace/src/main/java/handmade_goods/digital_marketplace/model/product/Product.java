@@ -1,7 +1,13 @@
-package handmade_goods.digital_marketplace.model;
+package handmade_goods.digital_marketplace.model.product;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import handmade_goods.digital_marketplace.model.review.ProductReview;
+import handmade_goods.digital_marketplace.model.review.Review;
+import handmade_goods.digital_marketplace.model.user.Seller;
+import handmade_goods.digital_marketplace.model.user.User;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,7 +22,7 @@ public class Product {
     private Double price;
     private String imageUrl;
 
-    public enum ProductCategory {
+    public enum Category {
         JEWELRY,
         ART,
         CLOTHING,
@@ -32,7 +38,7 @@ public class Product {
     }
 
     @Enumerated(EnumType.STRING)
-    private ProductCategory category;
+    private Category category;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ProductReview> reviews = new ArrayList<>();
@@ -41,12 +47,17 @@ public class Product {
     @JoinColumn(name = "seller_id", referencedColumnName = "user_id")
     private Seller seller;
 
+    public record Dto(Long id, String name, Double price, String imageUrl, User.Summary seller, List<ProductReview.Dto> reviews) {
+    }
+
+    public record Summary(Long id, String name, Double price, String imageUrl) {
+    }
 
     // Constructors
     public Product() {
     }
 
-    public Product(String name, String description, Double price, Seller seller, String imageUrl, ProductCategory category) {
+    public Product(String name, String description, Double price, Seller seller, String imageUrl, Category category) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -100,7 +111,7 @@ public class Product {
     public String toString() {
         return "Product{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", username='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", seller=" + seller +
@@ -108,8 +119,7 @@ public class Product {
                 ", category=" + category +
                 '}';
     }
-    
-    
+
     public String getImageUrl() {
         return imageUrl;
     }
@@ -118,11 +128,11 @@ public class Product {
         this.imageUrl = imageUrl;
     }
     
-    public ProductCategory getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(ProductCategory category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
     
@@ -136,5 +146,13 @@ public class Product {
 
     public void addReview(ProductReview review) {
         this.reviews.add(review);
+    }
+
+    public Summary summarize() {
+        return new Summary(id, name, price, imageUrl);
+    }
+
+    public Dto convertToDto() {
+        return new Dto(id, name, price, imageUrl, seller.summarize(), reviews.stream().map(ProductReview::convertToDto).toList());
     }
 }

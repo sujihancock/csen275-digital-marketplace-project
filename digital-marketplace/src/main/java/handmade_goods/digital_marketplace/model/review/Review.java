@@ -1,5 +1,7 @@
-package handmade_goods.digital_marketplace.model;
+package handmade_goods.digital_marketplace.model.review;
 
+import handmade_goods.digital_marketplace.model.user.Buyer;
+import handmade_goods.digital_marketplace.model.user.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,17 +18,20 @@ public abstract class Review {
 
     @ManyToOne
     @JoinColumn(name = "buyer_id", referencedColumnName = "user_id")
-    private Buyer buyer;
+    private Buyer reviewer;
+
+    public record Dto(Long id, String comment, Double rating, LocalDateTime date, User.Summary reviewer) {
+    }
 
     public Review() {
     }
 
-    public Review(Long id, String comment, Double rating, LocalDateTime date, Buyer buyer) {
+    public Review(Long id, String comment, Double rating, LocalDateTime date, Buyer reviewer) {
         this.id = id;
         this.comment = comment;
         this.rating = rating;
         this.date = date;
-        this.buyer = buyer;
+        this.reviewer = reviewer;
     }
 
     public Long getId() {
@@ -61,11 +66,15 @@ public abstract class Review {
         this.date = date;
     }
 
-    public Buyer getBuyer() {
-        return buyer;
+    public Buyer getReviewer() {
+        return reviewer;
     }
 
-    public void setBuyer(Buyer buyer) {
-        this.buyer = buyer;
+    public void setReviewer(Buyer reviewer) {
+        this.reviewer = reviewer;
+    }
+
+    public Dto convertToDto() {
+        return new Dto(id, comment, rating, date, reviewer.summarize());
     }
 }

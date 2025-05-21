@@ -1,7 +1,7 @@
 package handmade_goods.digital_marketplace.service;
 
-import handmade_goods.digital_marketplace.model.Buyer;
-import handmade_goods.digital_marketplace.repository.BuyerRepository;
+import handmade_goods.digital_marketplace.model.user.Buyer;
+import handmade_goods.digital_marketplace.repository.user.BuyerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
