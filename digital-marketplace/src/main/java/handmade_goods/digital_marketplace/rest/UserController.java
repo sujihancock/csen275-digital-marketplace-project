@@ -19,16 +19,14 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final HttpSession httpSession;
 
     @Autowired
-    public UserController(UserService userService, HttpSession httpSession) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.httpSession = httpSession;
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest loginRequest, HttpSession httpSession) {
         return userService.getByLoginCredentials(loginRequest)
                 .map(user -> {
                     httpSession.setAttribute("user", user);
@@ -37,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/signup/{type}")
-    public ResponseEntity<ApiResponse<String>> signup(@PathVariable String type, @RequestParam String username, @RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<ApiResponse<String>> signup(@PathVariable String type, @RequestParam String username, @RequestParam String email, @RequestParam String password, HttpSession httpSession) {
         if (userService.isEmailTaken(email)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("email already in use"));
         }
@@ -58,6 +56,8 @@ public class UserController {
                 return ResponseEntity.badRequest().body(ApiResponse.error("page not found"));
         }
 
+        httpSession.setAttribute("user", user);
+
         userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(type + " created"));
     }
@@ -69,8 +69,9 @@ public class UserController {
     }
 
     @PostMapping(path = "/logout")
-    public ResponseEntity<ApiResponse<String>> logout() {
+    public ResponseEntity<ApiResponse<String>> logout(HttpSession httpSession) {
         httpSession.removeAttribute("user");
+        httpSession.invalidate();
         return ResponseEntity.ok(ApiResponse.success("user logged out"));
     }
 }
