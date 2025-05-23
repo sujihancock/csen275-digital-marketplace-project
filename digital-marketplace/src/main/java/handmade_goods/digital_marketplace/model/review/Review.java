@@ -26,8 +26,7 @@ public abstract class Review {
     public Review() {
     }
 
-    public Review(Long id, String comment, Double rating, LocalDateTime date, Buyer reviewer) {
-        this.id = id;
+    public Review(String comment, Double rating, LocalDateTime date, Buyer reviewer) {
         this.comment = comment;
         this.rating = rating;
         this.date = date;

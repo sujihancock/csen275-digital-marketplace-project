@@ -15,5 +15,4 @@ public class BuyerController {
         this.buyerService = buyerService;
     }
 
-
 }

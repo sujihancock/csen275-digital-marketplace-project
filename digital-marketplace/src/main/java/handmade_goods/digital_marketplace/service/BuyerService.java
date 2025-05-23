@@ -17,7 +17,7 @@ public class BuyerService {
         this.buyerRepository = buyerRepository;
     }
 
-    public Optional<Buyer> getByUserId(Long userId) {
+    public Optional<Buyer> getById(Long userId) {
         return buyerRepository.findById(userId);
     }
 

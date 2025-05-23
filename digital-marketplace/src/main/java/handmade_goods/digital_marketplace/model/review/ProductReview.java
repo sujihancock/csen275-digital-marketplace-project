@@ -2,8 +2,10 @@ package handmade_goods.digital_marketplace.model.review;
 
 import handmade_goods.digital_marketplace.model.product.Product;
 import handmade_goods.digital_marketplace.model.user.Buyer;
-import handmade_goods.digital_marketplace.model.user.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 
@@ -18,12 +20,16 @@ public class ProductReview extends Review {
     public ProductReview() {
     }
 
-    public ProductReview(Long id, String comment, Double rating, Buyer reviewer, Product product, LocalDateTime date) {
-        super(id, comment, rating, date, reviewer);
+    public ProductReview(String comment, Double rating, Buyer reviewer, Product product, LocalDateTime date) {
+        super(comment, rating, date, reviewer);
         this.product = product;
     }
 
     public Product getProduct() {
         return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

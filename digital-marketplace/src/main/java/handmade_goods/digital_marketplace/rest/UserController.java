@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping(path = "api/users")
 public class UserController {
@@ -60,12 +58,6 @@ public class UserController {
 
         userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(type + " created"));
-    }
-
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse<?>> getUser(@PathVariable Long id) {
-        Optional<User> user = userService.getById(id);
-        return user.<ResponseEntity<ApiResponse<?>>>map(value -> ResponseEntity.ok(ApiResponse.success(value))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("user not found")));
     }
 
     @PostMapping(path = "/logout")
