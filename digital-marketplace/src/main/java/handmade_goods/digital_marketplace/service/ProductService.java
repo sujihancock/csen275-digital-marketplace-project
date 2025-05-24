@@ -29,7 +29,7 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public Product.Dto findById(Long id) {
+    public Product.Dto getProductDtoById(Long id) {
         return productRepository.findById(id).map(Product::convertToDto).orElse(null);
     }
 

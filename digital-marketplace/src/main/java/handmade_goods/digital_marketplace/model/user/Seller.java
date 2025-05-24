@@ -1,5 +1,6 @@
 package handmade_goods.digital_marketplace.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import handmade_goods.digital_marketplace.model.product.Product;
 import handmade_goods.digital_marketplace.model.review.SellerReview;
 import jakarta.persistence.*;
@@ -13,9 +14,11 @@ import java.util.stream.Collectors;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Seller extends User {
 
+    @JsonIgnore
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SellerReview> reviews = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 

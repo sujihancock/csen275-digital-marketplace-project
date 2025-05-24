@@ -1,12 +1,12 @@
 package handmade_goods.digital_marketplace.model.order;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import handmade_goods.digital_marketplace.model.product.Product;
 import handmade_goods.digital_marketplace.model.user.Buyer;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -20,7 +20,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    
+
     public enum OrderStatus {
         PENDING,
         SHIPPED,
@@ -40,6 +40,8 @@ public class Order {
     @JoinColumn(name = "buyer_id", referencedColumnName = "user_id")
     private Buyer buyer;
 
+    public record Summary(Long id, OrderStatus status, LocalDateTime date, double amount) {
+    }
 
     // Constructors
     public Order() {
@@ -134,5 +136,9 @@ public class Order {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public Summary summarize() {
+        return new Summary(id, status, date, amount);
     }
 }

@@ -33,7 +33,7 @@ public class ProductController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<ApiResponse<?>> view(@PathVariable Long id) {
-        Product.Dto productDto = productService.findById(id);
+        Product.Dto productDto = productService.getProductDtoById(id);
         return productDto != null ? ResponseEntity.ok(ApiResponse.success(productDto)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found"));
     }
 
@@ -51,7 +51,7 @@ public class ProductController {
                 .map(buyer -> productService.getById(id)
                         .map(product -> {
                             productService.addReview(product, buyer, reviewRequest);
-                            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("revie added"));
+                            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("review added"));
                         }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found"))))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("buyer with id: " + reviewerId + " not found")));
     }
