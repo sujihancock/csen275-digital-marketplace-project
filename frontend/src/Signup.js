@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { users } from './services/api';
 
 function Signup() {
         const[email, setEmail] = useState('');
@@ -6,9 +7,14 @@ function Signup() {
         const [password, setPassword] = useState('');
         const [message, setMessage] = useState('');
 
-        const handleSubmit = (event) => {
+        const handleSubmit = async (event) => {
             event.preventDefault();
-            setMessage(`Signed up as ${username}`);
+            try {
+                const response = await users.signup('buyer', username, email, password);
+                setMessage(`Successfully signed up as ${username}!`);
+            } catch (error) {
+                setMessage(error.response?.data?.message || 'Signup failed. Please try again.');
+            }
         }
 
         return (
