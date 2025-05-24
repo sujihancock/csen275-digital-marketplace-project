@@ -38,7 +38,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
             for (String keyword : keywords) {
                 keywordPredicates.add(
                         criteriaBuilder.like(
-                                criteriaBuilder.lower(product.get("username")), "%" + keyword.toLowerCase() + "%"
+                                criteriaBuilder.lower(product.get("name")), "%" + keyword.toLowerCase() + "%"
                         )
                 );
             }

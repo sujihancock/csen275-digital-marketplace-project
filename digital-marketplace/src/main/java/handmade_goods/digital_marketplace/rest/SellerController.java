@@ -36,7 +36,9 @@ public class SellerController {
 
     @GetMapping(path = "/{id}/products")
     public ResponseEntity<ApiResponse<?>> viewProducts(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(notFound(id, "seller")));
+        return sellerService.getById(id)
+                .<ResponseEntity<ApiResponse<?>>>map(seller -> ResponseEntity.ok(ApiResponse.success(sellerService.getProducts(seller))))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(notFound(id, "seller"))));
     }
 
     @PostMapping(path = "/{id}/products/add")

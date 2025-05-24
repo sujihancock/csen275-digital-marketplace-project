@@ -48,4 +48,8 @@ public class SellerService {
     public List<SellerReview.Dto> getReviews(Seller seller) {
        return seller.getReviews().stream().map(SellerReview::convertToDto).toList();
     }
+
+    public List<Product.Dto> getProducts(Seller seller) {
+        return seller.getProducts().stream().map(Product::convertToDto).toList();
+    }
 }
