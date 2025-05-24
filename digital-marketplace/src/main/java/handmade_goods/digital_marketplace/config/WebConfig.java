@@ -31,8 +31,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/api/users/login",                   // exclude login endpoint
                         "/api/users/signup/buyer",            // exclude signup buyer
-                        "/api/users/signup/seller",
-                        "/api/payment/create-checkout-session"// exclude signup seller
+                        "/api/users/signup/seller",           // exclude signup seller
+                        "/api/users/profile",                 // exclude profile endpoints (we handle auth manually)
+                        "/api/users/logout",                  // exclude logout endpoint
+                        "/api/payment/create-checkout-session"// exclude payment endpoint
                 );
     }
 } 
