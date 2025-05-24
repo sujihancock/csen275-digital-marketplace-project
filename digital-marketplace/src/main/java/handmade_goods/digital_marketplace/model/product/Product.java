@@ -1,14 +1,12 @@
 package handmade_goods.digital_marketplace.model.product;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import handmade_goods.digital_marketplace.model.review.ProductReview;
-import handmade_goods.digital_marketplace.model.review.Review;
 import handmade_goods.digital_marketplace.model.user.Seller;
 import handmade_goods.digital_marketplace.model.user.User;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -111,7 +109,7 @@ public class Product {
     public String toString() {
         return "Product{" +
                 "id=" + id +
-                ", username='" + name + '\'' +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", seller=" + seller +

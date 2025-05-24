@@ -1,26 +1,28 @@
 package handmade_goods.digital_marketplace.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import handmade_goods.digital_marketplace.model.order.Order;
-import handmade_goods.digital_marketplace.model.product.Product;
-import handmade_goods.digital_marketplace.model.review.Review;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "buyers")
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Buyer extends User {
 
+    @JsonIgnore
     @OneToMany(mappedBy = "buyer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
 
+    @JsonIgnore
     @Transient
     private Cart cart = new Cart();
 
-//    public record Dto(Long id, String username, String email, List<Review.Dto> reviews, List<Product.Summary> products) {
-//    }
+    public record Dto(Long id, String username, String email, List<Order.Summary> orders) {
+    }
 
     public Buyer() {
     }
@@ -47,5 +49,9 @@ public class Buyer extends User {
 
     public void addOrder(Order order) {
         orders.add(order);
+    }
+
+    public Dto convertToDto() {
+        return new Buyer.Dto(getId(), getUsername(), getEmail(), getOrders().stream().map(Order::summarize).collect(Collectors.toList()));
     }
 }

@@ -1,8 +1,8 @@
 package handmade_goods.digital_marketplace.model.user;
 
-import handmade_goods.digital_marketplace.model.review.Review;
-import handmade_goods.digital_marketplace.model.review.SellerReview;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import handmade_goods.digital_marketplace.model.product.Product;
+import handmade_goods.digital_marketplace.model.review.SellerReview;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -14,14 +14,16 @@ import java.util.stream.Collectors;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Seller extends User {
 
+    @JsonIgnore
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SellerReview> reviews = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 
-//    public record Dto(Long id, String username, String email, List<SellerReview.Dto> reviews, List<Product.Summary> products) {
-//    }
+    public record Dto(Long id, String username, String email, List<SellerReview.Dto> reviews, List<Product.Summary> products) {
+    }
 
     public Seller() {
     }
@@ -58,7 +60,7 @@ public class Seller extends User {
         this.products.remove(product);
     }
 
-//    public Dto convertToDto() {
-//        return new Dto(getId(), getUsername(), getEmail(), getReviews().stream().map(SellerReview::convertToDto).collect(Collectors.toList()), getProducts().stream().map(Product::summarize).collect(Collectors.toList()));
-//    }
+    public Dto convertToDto() {
+        return new Dto(getId(), getUsername(), getEmail(), getReviews().stream().map(SellerReview::convertToDto).collect(Collectors.toList()), getProducts().stream().map(Product::summarize).collect(Collectors.toList()));
+    }
 }

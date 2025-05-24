@@ -30,7 +30,6 @@ public class UserController {
     public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginRequest loginRequest, HttpSession httpSession) {
         Optional<User> userOpt = userService.getByLoginCredentials(loginRequest);
         if (userOpt.isPresent()) {
-            System.out.println("user found");
             User user = userOpt.get();
             httpSession.setAttribute("user", user);
             UserProfileDto profile = userService.getUserProfile(user);

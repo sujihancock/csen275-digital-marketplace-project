@@ -2,9 +2,10 @@ package handmade_goods.digital_marketplace.rest;
 
 import handmade_goods.digital_marketplace.model.product.Product;
 import handmade_goods.digital_marketplace.model.product.SearchRequest;
+import handmade_goods.digital_marketplace.model.review.ReviewRequest;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
+import handmade_goods.digital_marketplace.service.BuyerService;
 import handmade_goods.digital_marketplace.service.ProductService;
-import handmade_goods.digital_marketplace.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,12 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final UserService userService;
+    private final BuyerService buyerService;
 
     @Autowired
-    public ProductController(ProductService productService, UserService userService) {
+    public ProductController(ProductService productService, BuyerService buyerService) {
         this.productService = productService;
-        this.userService = userService;
+        this.buyerService = buyerService;
     }
 
     @GetMapping(path = "/search")
@@ -32,7 +33,26 @@ public class ProductController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<ApiResponse<?>> view(@PathVariable Long id) {
-        Product.Dto productDto = productService.findById(id);
+        Product.Dto productDto = productService.getProductDtoById(id);
         return productDto != null ? ResponseEntity.ok(ApiResponse.success(productDto)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found"));
+    }
+
+    @GetMapping(path = "/{id}/reviews")
+    public ResponseEntity<ApiResponse<?>> reviews(@PathVariable Long id) {
+        return productService.getById(id)
+                .<ResponseEntity<ApiResponse<?>>>map(product -> ResponseEntity.ok(ApiResponse.success(productService.getReviews(product))))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found")));
+    }
+
+    @PostMapping(path = "/{id}/reviews/add")
+    public ResponseEntity<ApiResponse<String>> addReviews(@PathVariable Long id, @RequestBody ReviewRequest reviewRequest) {
+        Long reviewerId = reviewRequest.reviewerId();
+        return buyerService.getById(reviewerId)
+                .map(buyer -> productService.getById(id)
+                        .map(product -> {
+                            productService.addReview(product, buyer, reviewRequest);
+                            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("review added"));
+                        }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found"))))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("buyer with id: " + reviewerId + " not found")));
     }
 }
