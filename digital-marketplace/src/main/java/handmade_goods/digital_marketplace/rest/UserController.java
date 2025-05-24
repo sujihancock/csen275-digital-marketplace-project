@@ -1,5 +1,6 @@
 package handmade_goods.digital_marketplace.rest;
 
+import handmade_goods.digital_marketplace.dto.UserProfileDto;
 import handmade_goods.digital_marketplace.model.user.Buyer;
 import handmade_goods.digital_marketplace.model.user.LoginRequest;
 import handmade_goods.digital_marketplace.model.user.Seller;
@@ -26,12 +27,16 @@ public class UserController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest loginRequest, HttpSession httpSession) {
-        return userService.getByLoginCredentials(loginRequest)
-                .map(user -> {
-                    httpSession.setAttribute("user", user);
-                    return ResponseEntity.ok(ApiResponse.success("user logged in"));
-                }).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("incorrect username or password")));
+    public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginRequest loginRequest, HttpSession httpSession) {
+        Optional<User> userOpt = userService.getByLoginCredentials(loginRequest);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            httpSession.setAttribute("user", user);
+            UserProfileDto profile = userService.getUserProfile(user);
+            return ResponseEntity.ok(ApiResponse.success(profile, "user logged in"));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("incorrect username or password"));
+        }
     }
 
     @PostMapping(path = "/signup/{type}")
@@ -66,6 +71,34 @@ public class UserController {
     public ResponseEntity<ApiResponse<?>> getUser(@PathVariable Long id) {
         Optional<User> user = userService.getById(id);
         return user.<ResponseEntity<ApiResponse<?>>>map(value -> ResponseEntity.ok(ApiResponse.success(value))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("user not found")));
+    }
+
+    @GetMapping(path = "/profile")
+    public ResponseEntity<ApiResponse<?>> getProfile(HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("not logged in"));
+        }
+        
+        UserProfileDto profile = userService.getUserProfile(user);
+        return ResponseEntity.ok(ApiResponse.success(profile));
+    }
+
+    @PutMapping(path = "/profile")
+    public ResponseEntity<ApiResponse<?>> updateProfile(@RequestParam String username, HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("not logged in"));
+        }
+        
+        try {
+            User updatedUser = userService.updateUsername(user.getId(), username);
+            httpSession.setAttribute("user", updatedUser); // Update session
+            UserProfileDto profile = userService.getUserProfile(updatedUser);
+            return ResponseEntity.ok(ApiResponse.success(profile, "username updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("failed to update username: " + e.getMessage()));
+        }
     }
 
     @PostMapping(path = "/logout")
