@@ -2,7 +2,11 @@ package handmade_goods.digital_marketplace.service;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Account;
+import com.stripe.model.AccountLink;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.AccountCreateParams;
+import com.stripe.param.AccountLinkCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import handmade_goods.digital_marketplace.dto.ProductRequest;
 import handmade_goods.digital_marketplace.dto.StripeResponse;
@@ -14,6 +18,9 @@ public class StripeService {
 
     @Value("${stripe.api.key}")
     private String secretKey;
+
+    @Value("${client.url}")
+    private String clientUrl;
 
     public StripeResponse checkoutProducts(ProductRequest request) {
         Stripe.apiKey = secretKey;
@@ -46,5 +53,23 @@ public class StripeService {
         } catch (StripeException e) {
             return new StripeResponse("FAILED", "Stripe session creation failed: " + e.getMessage(), null, null);
         }
+    }
+
+    public record StripeAccount(String id, String url) { }
+
+    public StripeAccount onboardSeller() throws StripeException {
+        Stripe.apiKey = secretKey;
+        AccountCreateParams accountParams = AccountCreateParams.builder().setType(AccountCreateParams.Type.EXPRESS).build();
+
+        Account account = Account.create(accountParams);
+        AccountLinkCreateParams accountLinkParams = AccountLinkCreateParams.builder()
+                .setAccount(account.getId())
+                .setRefreshUrl(clientUrl)
+                .setReturnUrl(clientUrl + "/profile")
+                .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
+                .build();
+
+        AccountLink accountLink = AccountLink.create(accountLinkParams);
+        return new StripeAccount(account.getId(), accountLink.getUrl());
     }
 }

@@ -1,11 +1,13 @@
 package handmade_goods.digital_marketplace.rest;
 
+import com.stripe.exception.StripeException;
 import handmade_goods.digital_marketplace.dto.UserProfileDto;
 import handmade_goods.digital_marketplace.model.user.Buyer;
 import handmade_goods.digital_marketplace.model.user.LoginRequest;
 import handmade_goods.digital_marketplace.model.user.Seller;
 import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
+import handmade_goods.digital_marketplace.service.StripeService;
 import handmade_goods.digital_marketplace.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,12 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final StripeService stripeService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, StripeService stripeService) {
         this.userService = userService;
+        this.stripeService = stripeService;
     }
 
     @PostMapping(path = "/login")
@@ -50,21 +54,28 @@ public class UserController {
         }
 
         User user;
+        ApiResponse<String> apiResponse;
         switch (type) {
             case "buyer":
                 user = new Buyer(username, password, email);
+                apiResponse = ApiResponse.success("buyer created");
                 break;
             case "seller":
-                user = new Seller(username, password, email);
+                try {
+                    StripeService.StripeAccount stripeAccount = stripeService.onboardSeller();
+                    user = new Seller(username, password, email, stripeAccount.id());
+                    apiResponse = ApiResponse.success(stripeAccount.url());
+                } catch (StripeException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("error onboarding seller: " + e.getMessage()));
+                }
                 break;
             default:
-                return ResponseEntity.badRequest().body(ApiResponse.error("page not found"));
+                return ResponseEntity.badRequest().build();
         }
 
         httpSession.setAttribute("user", user);
-
         userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(type + " created"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @GetMapping(path = "/{id}")
