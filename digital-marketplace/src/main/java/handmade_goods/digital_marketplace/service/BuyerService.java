@@ -76,8 +76,8 @@ public class BuyerService {
         cart.clearCart();
     }
 
-    public Map<Long, Double> getPaymentsToSellers(Cart cart) {
-        Map<Long, Double> payments = new HashMap<>();
+    public Map<String, Double> calculatePaymentsToSellers(Cart cart) {
+        Map<String, Double> payments = new HashMap<>();
 
         Map<Long, Integer> cartItems = cart.getProducts();
         for (Long id : cartItems.keySet()) {
@@ -87,8 +87,8 @@ public class BuyerService {
             }
 
             Product product = productOpt.get();
-            Long sellerId = product.getSeller().getId();
-            payments.put(sellerId, payments.getOrDefault(sellerId, 0.0) + cartItems.get(id) * product.getPrice());
+            String sellerStripeId = product.getSeller().getStripeAccountId();
+            payments.put(sellerStripeId, payments.getOrDefault(sellerStripeId, 0.0) + cartItems.get(id) * product.getPrice());
         }
 
         return payments;

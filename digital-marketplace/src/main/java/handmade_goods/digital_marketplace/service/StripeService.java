@@ -4,14 +4,20 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.AccountLink;
+import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.AccountCreateParams;
 import com.stripe.param.AccountLinkCreateParams;
+import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import handmade_goods.digital_marketplace.dto.ProductRequest;
 import handmade_goods.digital_marketplace.dto.StripeResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class StripeService {
@@ -71,5 +77,31 @@ public class StripeService {
 
         AccountLink accountLink = AccountLink.create(accountLinkParams);
         return new StripeAccount(account.getId(), accountLink.getUrl());
+    }
+
+    public record StripeClientSecret(String sellerStripeId, String clientSecret) {
+
+    }
+
+    public List<StripeClientSecret> handleCheckOut(Map<String, Double> paymentsBySeller) throws StripeException {
+        List<StripeClientSecret> clientSecrets = new ArrayList<>();
+
+        for (Map.Entry<String, Double> entry : paymentsBySeller.entrySet()) {
+            String sellerStripeId = entry.getKey();
+            PaymentIntentCreateParams paymentParams = PaymentIntentCreateParams.builder()
+                    .setAmount(Math.round(entry.getValue() * 100))
+                    .setCurrency("usd")
+                    .addPaymentMethodType("card")
+                    .setTransferData(
+                            PaymentIntentCreateParams.TransferData.builder()
+                                    .setDestination(sellerStripeId)
+                                    .build()
+                    )
+                    .build();
+
+            clientSecrets.add(new StripeClientSecret(sellerStripeId, PaymentIntent.create(paymentParams).getClientSecret()));
+        }
+
+        return clientSecrets;
     }
 }
