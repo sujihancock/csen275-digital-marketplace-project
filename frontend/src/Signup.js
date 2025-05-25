@@ -16,6 +16,12 @@ function Signup() {
             event.preventDefault();
             try {
                 const response = await users.signup(role, username, email, password);
+                if (role === 'seller') {
+                    // Backend returns onboarding URL as `message`
+                    window.location.href = response.data.message; // redirect seller to Stripe onboarding and back to profile after completion
+                    return;
+                }
+
                 setMessage(`Successfully signed up as a ${role}! Logging you in...`);
                 
                 // Auto-login after successful signup
@@ -82,6 +88,6 @@ function Signup() {
                 </form>
             </div>
         )
-};
+}
 
 export default Signup;
