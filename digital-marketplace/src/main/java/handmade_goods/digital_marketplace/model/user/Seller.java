@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Seller extends User {
 
+    private String stripeAccountId;
+
     @JsonIgnore
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SellerReview> reviews = new ArrayList<>();
@@ -28,8 +30,13 @@ public class Seller extends User {
     public Seller() {
     }
 
-    public Seller(String username, String password, String email) {
+    public Seller(String username, String password, String email, String stripeAccountId) {
         super(username, password, email);
+        this.stripeAccountId = stripeAccountId;
+    }
+
+    public String getStripeAccountId() {
+        return stripeAccountId;
     }
 
     public List<SellerReview> getReviews() {
