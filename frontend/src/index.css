@@ -34,3 +34,18 @@ code {
 .navbar a:hover {
   color: #f1356d;
 }
+
+.products-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.product-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fff;
+  text-align: center;
+}
