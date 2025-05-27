@@ -28,15 +28,7 @@ public class OrderService {
         this.productRepository = productRepository;
     }
 
-    public void save(Order order) {
-        orderRepository.save(order);
-    }
-
-    public Optional<Order> getById(Long id) {
-        return orderRepository.findById(id);
-    }
-
-    public Order.Dto createAsDto(Buyer buyer) {
+    public Order.Dto convertCartToOrder(Buyer buyer) {
         Order order = new Order(LocalDateTime.now(ZoneId.systemDefault()), Order.OrderStatus.PENDING, buyer);
 
         List<CartItemDto> cartItemDtos = new ArrayList<>();
@@ -51,16 +43,5 @@ public class OrderService {
 
         orderRepository.save(order);
         return order.convertToDto(cartItemDtos);
-    }
-
-    public void updateStatus(Long id, Order.OrderStatus status) {
-        Optional<Order> orderOpt = orderRepository.findById(id);
-        if (orderOpt.isEmpty()) {
-            throw new RuntimeException("Order not found");
-        }
-
-        Order order = orderOpt.get();
-        order.setStatus(status);
-        orderRepository.save(order);
     }
 }

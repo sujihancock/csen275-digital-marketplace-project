@@ -78,12 +78,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse<?>> getUser(@PathVariable Long id) {
-        Optional<User> user = userService.getById(id);
-        return user.<ResponseEntity<ApiResponse<?>>>map(value -> ResponseEntity.ok(ApiResponse.success(value))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("user not found")));
-    }
-
     @GetMapping(path = "/profile")
     public ResponseEntity<ApiResponse<?>> getProfile(HttpSession httpSession) {
         User user = (User) httpSession.getAttribute("user");
