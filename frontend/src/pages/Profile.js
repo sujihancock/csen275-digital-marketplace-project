@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { useUser } from './context/UserContext';
-import { users } from './services/api';
+import { useUser } from '../context/UserContext';
+import { users } from '../services/api';
+import { Link } from 'react-router-dom';
+
 
 const Profile = () => {
     const { user, logout, refetchUser } = useUser();
@@ -163,13 +165,19 @@ const Profile = () => {
                             <ul>
                                 <li>Add new products to your store</li>
                                 <li>Manage your product listings</li>
-                                <li>View sales analytics</li>
+                                <li>View product reviews</li>
                                 <li>Respond to customer reviews</li>
                             </ul>
                             <div className="quick-actions">
-                                <button className="action-btn">Add Product</button>
-                                <button className="action-btn">Manage Products</button>
-                                <button className="action-btn">Sales Report</button>
+                                <Link to="/add-product">
+                                    <button className="action-btn">Add Product</button>
+                                </Link>
+                                <Link to="/manage-products">
+                                    <button className="action-btn">Manage Products</button>
+                                </Link>
+                                <Link to="/product-reviews">
+                                    <button className="action-btn">View Reviews</button>
+                                </Link>
                             </div>
                         </div>
                     )}
