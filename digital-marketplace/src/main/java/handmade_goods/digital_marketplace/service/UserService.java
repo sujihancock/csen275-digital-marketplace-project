@@ -1,9 +1,7 @@
 package handmade_goods.digital_marketplace.service;
 
 import handmade_goods.digital_marketplace.dto.UserProfileDto;
-import handmade_goods.digital_marketplace.model.user.Buyer;
 import handmade_goods.digital_marketplace.model.user.LoginRequest;
-import handmade_goods.digital_marketplace.model.user.Seller;
 import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.repository.user.BuyerRepository;
 import handmade_goods.digital_marketplace.repository.user.SellerRepository;
@@ -29,18 +27,6 @@ public class UserService {
 
     public Optional<User> getByLoginCredentials(LoginRequest loginRequest) {
         return userRepository.findByUsernameAndPassword(loginRequest.username(), loginRequest.password());
-    }
-
-    public Optional<User> getByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    public Optional<User> getByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    public Optional<User> getById(Long id) {
-        return userRepository.findById(id);
     }
 
     public boolean isEmailTaken(String email) {

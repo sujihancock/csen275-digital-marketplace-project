@@ -1,5 +1,6 @@
 package handmade_goods.digital_marketplace.service;
 
+import handmade_goods.digital_marketplace.dto.CartItemDto;
 import handmade_goods.digital_marketplace.model.order.Order;
 import handmade_goods.digital_marketplace.model.product.Product;
 import handmade_goods.digital_marketplace.model.user.Buyer;
@@ -9,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,16 +28,10 @@ public class OrderService {
         this.productRepository = productRepository;
     }
 
-    public void save(Order order) {
-        orderRepository.save(order);
-    }
+    public Order.Dto convertCartToOrder(Buyer buyer) {
+        Order order = new Order(LocalDateTime.now(ZoneId.systemDefault()), Order.OrderStatus.PENDING, buyer);
 
-    public Optional<Order> getById(Long id) {
-        return orderRepository.findById(id);
-    }
-
-    public Order create(LocalDateTime date, Buyer buyer) {
-        Order order = new Order(date, Order.OrderStatus.PENDING, buyer);
+        List<CartItemDto> cartItemDtos = new ArrayList<>();
         Map<Long, Integer> cartItems = buyer.getCart().getProducts();
         for (Long id : cartItems.keySet()) {
             Optional<Product> product = productRepository.findById(id);
@@ -43,17 +41,7 @@ public class OrderService {
             order.addProduct(product.get());
         }
 
-        return order;
-    }
-
-    public void updateStatus(Long id, Order.OrderStatus status) {
-        Optional<Order> orderOpt = orderRepository.findById(id);
-        if (orderOpt.isEmpty()) {
-            throw new RuntimeException("Order not found");
-        }
-
-        Order order = orderOpt.get();
-        order.setStatus(status);
         orderRepository.save(order);
+        return order.convertToDto(cartItemDtos);
     }
 }

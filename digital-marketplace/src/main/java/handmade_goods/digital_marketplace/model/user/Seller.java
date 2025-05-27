@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Entity
@@ -69,5 +70,17 @@ public class Seller extends User {
 
     public Dto convertToDto() {
         return new Dto(getId(), getUsername(), getEmail(), getReviews().stream().map(SellerReview::convertToDto).collect(Collectors.toList()), getProducts().stream().map(Product::summarize).collect(Collectors.toList()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Seller seller = (Seller) o;
+        return Objects.equals(stripeAccountId, seller.stripeAccountId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(stripeAccountId);
     }
 }

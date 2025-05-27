@@ -52,8 +52,4 @@ public class SellerService {
     public List<Product.Dto> getProducts(Seller seller) {
         return seller.getProducts().stream().map(Product::convertToDto).toList();
     }
-
-//    public void chargeBuyer(Buyer buyer, Double totalAmount) {
-//        // charge payment Stripe logic
-//    }
 }

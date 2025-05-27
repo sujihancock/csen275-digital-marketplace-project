@@ -3,9 +3,11 @@ package handmade_goods.digital_marketplace.rest;
 import handmade_goods.digital_marketplace.model.product.Product;
 import handmade_goods.digital_marketplace.model.product.SearchRequest;
 import handmade_goods.digital_marketplace.model.review.ReviewRequest;
+import handmade_goods.digital_marketplace.model.user.Buyer;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
 import handmade_goods.digital_marketplace.service.BuyerService;
 import handmade_goods.digital_marketplace.service.ProductService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,14 +47,16 @@ public class ProductController {
     }
 
     @PostMapping(path = "/{id}/reviews/add")
-    public ResponseEntity<ApiResponse<String>> addReviews(@PathVariable Long id, @RequestBody ReviewRequest reviewRequest) {
-        Long reviewerId = reviewRequest.reviewerId();
-        return buyerService.getById(reviewerId)
-                .map(buyer -> productService.getById(id)
-                        .map(product -> {
-                            productService.addReview(product, buyer, reviewRequest);
-                            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("review added"));
-                        }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found"))))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("buyer with id: " + reviewerId + " not found")));
+    public ResponseEntity<ApiResponse<String>> addReviews(@PathVariable Long id, @RequestBody ReviewRequest reviewRequest, HttpSession httpSession) {
+        Buyer reviewer = (Buyer) httpSession.getAttribute("user");
+        if (reviewer == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("not logged in"));
+        }
+
+        return productService.getById(id)
+                .map(product -> {
+                    productService.addReview(product, reviewer, reviewRequest);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("review added"));
+                }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found")));
     }
 }

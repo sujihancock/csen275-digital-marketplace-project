@@ -1,7 +1,9 @@
 package handmade_goods.digital_marketplace.model.order;
 
+import handmade_goods.digital_marketplace.dto.CartItemDto;
 import handmade_goods.digital_marketplace.model.product.Product;
 import handmade_goods.digital_marketplace.model.user.Buyer;
+import handmade_goods.digital_marketplace.model.user.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +18,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime date;
-    private double amount = 0.0;
+    private Double amount = 0.0;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -40,7 +42,10 @@ public class Order {
     @JoinColumn(name = "buyer_id", referencedColumnName = "user_id")
     private Buyer buyer;
 
-    public record Summary(Long id, OrderStatus status, LocalDateTime date, double amount) {
+    public record Dto(Long id, OrderStatus status, LocalDateTime date, Double amount, List<CartItemDto> items, User.Summary buyer) {
+    }
+
+    public record Summary(Long id, OrderStatus status, LocalDateTime date, Double amount) {
     }
 
     // Constructors
@@ -90,7 +95,7 @@ public class Order {
     }
 
     private void calculateAmount() {
-        amount = 0;
+        amount = 0.0;
         if (products != null) {
             for (Product product : products) {
                 amount += product.getPrice();
@@ -98,11 +103,11 @@ public class Order {
         }
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
@@ -127,7 +132,7 @@ public class Order {
 
     public void clearProducts() {
         products.clear();
-        amount = 0;
+        amount = 0.0;
     }
 
     public OrderStatus getStatus() {
@@ -140,5 +145,9 @@ public class Order {
 
     public Summary summarize() {
         return new Summary(id, status, date, amount);
+    }
+
+    public Dto convertToDto(List<CartItemDto> items) {
+        return new Dto(id, status, date, amount, items, buyer.summarize());
     }
 }
