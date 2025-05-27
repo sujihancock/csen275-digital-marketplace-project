@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import CheckoutButton from './CheckoutButton';
+import CheckoutButton from '../components/CheckoutButton';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
