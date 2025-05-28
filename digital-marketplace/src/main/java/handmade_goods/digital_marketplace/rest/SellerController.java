@@ -6,7 +6,6 @@ import handmade_goods.digital_marketplace.model.user.Buyer;
 import handmade_goods.digital_marketplace.model.user.Seller;
 import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
-import handmade_goods.digital_marketplace.service.BuyerService;
 import handmade_goods.digital_marketplace.service.SellerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +20,10 @@ import java.util.Objects;
 public class SellerController {
 
     private final SellerService sellerService;
-    private final BuyerService buyerService;
 
     @Autowired
-    public SellerController(SellerService sellerService, BuyerService buyerService) {
+    public SellerController(SellerService sellerService) {
         this.sellerService = sellerService;
-        this.buyerService = buyerService;
     }
 
     private String notFound(Long id) {
@@ -55,6 +52,16 @@ public class SellerController {
 
         sellerService.addProduct((Seller) seller, product);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("product added"));
+    }
+
+    @DeleteMapping(path = "/{sellerId}/products/{productId}/remove")
+    public ResponseEntity<ApiResponse<String>> removeProduct(@PathVariable Long sellerId, @PathVariable Long productId, HttpSession httpSession) {
+        User seller = (User) httpSession.getAttribute("user");
+        if (seller == null || !Objects.equals(sellerId, seller.getId())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("not logged in"));
+        }
+        sellerService.removeProduct((Seller) seller, productId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("product removed"));
     }
 
     @GetMapping(path = "/{id}/reviews")

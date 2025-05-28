@@ -9,6 +9,7 @@ import handmade_goods.digital_marketplace.model.user.Seller;
 import handmade_goods.digital_marketplace.repository.product.ProductRepository;
 import handmade_goods.digital_marketplace.repository.review.SellerReviewRepository;
 import handmade_goods.digital_marketplace.repository.user.SellerRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,11 @@ public class SellerService {
 
     public void addProduct(Seller seller, AddRequest productRequest) {
         productRepository.save(new Product(productRequest.name(), productRequest.description(), productRequest.price(), seller, productRequest.imageUrl(), productRequest.category()));
+    }
+
+    @Transactional
+    public void removeProduct(Seller seller, Long productId) {
+        productRepository.deleteByIdAndSeller(productId, seller);
     }
 
     public void addReview(Seller seller, Buyer buyer, ReviewRequest review) {
