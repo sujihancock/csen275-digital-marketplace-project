@@ -44,4 +44,8 @@ public class ProductService {
     public List<ProductReview.Dto> getReviews(Product product) {
         return product.getReviews().stream().map(ProductReview::convertToDto).toList();
     }
+
+    public List<Product.Category> getCategories() {
+        return List.of(Product.Category.values());
+    }
 }

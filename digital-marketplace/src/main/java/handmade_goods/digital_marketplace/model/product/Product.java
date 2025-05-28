@@ -45,7 +45,7 @@ public class Product {
     @JoinColumn(name = "seller_id", referencedColumnName = "user_id")
     private Seller seller;
 
-    public record Dto(Long id, String name, Double price, String imageUrl, User.Summary seller, List<ProductReview.Dto> reviews) {
+    public record Dto(Long id, String name, String description, Double price, String imageUrl, User.Summary seller, List<ProductReview.Dto> reviews) {
     }
 
     public record Summary(Long id, String name, Double price, String imageUrl) {
@@ -151,6 +151,6 @@ public class Product {
     }
 
     public Dto convertToDto() {
-        return new Dto(id, name, price, imageUrl, seller.summarize(), reviews.stream().map(ProductReview::convertToDto).toList());
+        return new Dto(id, name, description, price, imageUrl, seller.summarize(), reviews.stream().map(ProductReview::convertToDto).toList());
     }
 }
