@@ -81,4 +81,17 @@ public class BuyerController {
             return handleExceptions(e);
         }
     }
+
+    @GetMapping(path = "/cart/amount")
+    public ResponseEntity<ApiResponse<?>> getCartAmount(HttpSession httpSession) {
+        try {
+            Buyer buyer = (Buyer) httpSession.getAttribute("user");
+            if (buyer == null) {
+                throw new RuntimeException("not logged in");
+            }
+            return ResponseEntity.ok(ApiResponse.success(buyer.getCart().getAmount()));
+        } catch (Exception e) {
+            return handleExceptions(e);
+        }
+    }
 }

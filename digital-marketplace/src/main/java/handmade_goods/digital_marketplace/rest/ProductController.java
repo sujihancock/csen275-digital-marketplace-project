@@ -5,7 +5,6 @@ import handmade_goods.digital_marketplace.model.product.SearchRequest;
 import handmade_goods.digital_marketplace.model.review.ReviewRequest;
 import handmade_goods.digital_marketplace.model.user.Buyer;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
-import handmade_goods.digital_marketplace.service.BuyerService;
 import handmade_goods.digital_marketplace.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +19,10 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final BuyerService buyerService;
 
     @Autowired
-    public ProductController(ProductService productService, BuyerService buyerService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.buyerService = buyerService;
     }
 
     @GetMapping(path = "/search")
@@ -58,5 +55,10 @@ public class ProductController {
                     productService.addReview(product, reviewer, reviewRequest);
                     return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("review added"));
                 }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found")));
+    }
+
+    @GetMapping(path = "/categories")
+    public ResponseEntity<ApiResponse<?>> categories() {
+        return ResponseEntity.ok(ApiResponse.success(productService.getCategories()));
     }
 }
