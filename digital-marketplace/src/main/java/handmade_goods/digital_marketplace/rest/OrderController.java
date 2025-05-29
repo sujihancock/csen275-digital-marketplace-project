@@ -24,6 +24,12 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    /**
+     * Saves an order from the checked out cart of the buyer signed in to the application
+     *
+     * @return a new order's id, status, date, amount, an array of cart items (product (id, name, price, image url),
+     * quantity, total price), buyer (id, username)
+     **/
     @GetMapping(path = "/save")
     public ResponseEntity<ApiResponse<?>> saveOrder(HttpSession httpSession) {
         try {

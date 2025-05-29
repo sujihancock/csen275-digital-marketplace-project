@@ -9,6 +9,7 @@ import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
 import handmade_goods.digital_marketplace.service.StripeService;
 import handmade_goods.digital_marketplace.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "api/users")
+@RequestMapping(path = "/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -30,12 +31,18 @@ public class UserController {
         this.stripeService = stripeService;
     }
 
+    /**
+     * Signs in the user into the application
+     *
+     * @param loginRequest contains username and password
+     * @return a status message
+     * */
     @PostMapping(path = "/login")
-    public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginRequest loginRequest, HttpSession httpSession) {
+    public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginRequest loginRequest, HttpServletRequest httpServletRequest) throws StripeException {
         Optional<User> userOpt = userService.getByLoginCredentials(loginRequest);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            httpSession.setAttribute("user", user);
+            httpServletRequest.getSession().setAttribute("user", user);
             UserProfileDto profile = userService.getUserProfile(user);
             return ResponseEntity.ok(ApiResponse.success(profile, "user logged in"));
         } else {
@@ -43,6 +50,14 @@ public class UserController {
         }
     }
 
+    /**
+     * Registers the user as either a buyer or a seller
+     *
+     * @param type is either 'buyer' or 'seller'
+     * @param username must be unique to the user
+     * @param email must be unique to the user
+     * @return a status message
+     * */
     @PostMapping(path = "/signup/{type}")
     public ResponseEntity<ApiResponse<String>> signup(@PathVariable String type, @RequestParam String username, @RequestParam String email, @RequestParam String password, HttpSession httpSession) {
         if (userService.isEmailTaken(email)) {
@@ -78,6 +93,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
+    /**
+     * Get the profile of the user signed in to the application
+     *
+     *
+     * @return the user's id, username, email, role
+     **/
     @GetMapping(path = "/profile")
     public ResponseEntity<ApiResponse<?>> getProfile(HttpSession httpSession) {
         User user = (User) httpSession.getAttribute("user");
@@ -89,6 +110,11 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(profile));
     }
 
+    /**
+     * Update the username of the user signed in the application
+     *
+     * @return a status message
+     **/
     @PutMapping(path = "/profile")
     public ResponseEntity<ApiResponse<?>> updateProfile(@RequestParam String username, HttpSession httpSession) {
         User user = (User) httpSession.getAttribute("user");
@@ -106,6 +132,11 @@ public class UserController {
         }
     }
 
+    /**
+     * Signs the user out of the application
+     *
+     * @return a status message
+     **/
     @PostMapping(path = "/logout")
     public ResponseEntity<ApiResponse<String>> logout(HttpSession httpSession) {
         httpSession.removeAttribute("user");
