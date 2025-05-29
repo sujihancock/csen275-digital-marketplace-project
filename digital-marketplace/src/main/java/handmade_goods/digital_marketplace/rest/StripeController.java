@@ -35,6 +35,12 @@ public class StripeController {
 //        return ResponseEntity.ok(response);
 //    }
 
+    /**
+     * Checks out all items in the cart of the user signed in the application and calculates the amount owed to each
+     * seller whose product the user buys
+     *
+     * @return a list of seller stripe account ids with respective client secrets
+     **/
     @GetMapping("/checkout")
     public ResponseEntity<ApiResponse<?>> checkout(HttpSession httpSession) {
         try {

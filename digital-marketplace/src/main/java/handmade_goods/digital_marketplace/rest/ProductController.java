@@ -25,17 +25,36 @@ public class ProductController {
         this.productService = productService;
     }
 
+    /**
+     * Get all products based on search by keywords and/or categories
+     *
+     * @param searchRequest contains an array of keywords and an array of categories
+     * @return a list of search results, each containing a product's id, name, price, and image url
+     **/
     @GetMapping(path = "/search")
     public ResponseEntity<ApiResponse<List<Product.Summary>>> search(@RequestBody SearchRequest searchRequest) {
         return ResponseEntity.ok(ApiResponse.success(productService.search(searchRequest)));
     }
 
+    /**
+     * View an individual product
+     *
+     * @param id identifies the product in the database
+     * @return id, name, image, description, price, image url, seller (id, username), and an array of product
+     * reviews (id, comment, rating, date, reviewer (id, username)
+     **/
     @GetMapping(path = "/{id}")
     public ResponseEntity<ApiResponse<?>> view(@PathVariable Long id) {
         Product.Dto productDto = productService.getProductDtoById(id);
         return productDto != null ? ResponseEntity.ok(ApiResponse.success(productDto)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found"));
     }
 
+    /**
+     * View the reviews of an individual product
+     *
+     * @param id identifies a product in the database
+     * @return a list of the product's reviews (id, comment, rating, date, reviewer (id, username)
+     **/
     @GetMapping(path = "/{id}/reviews")
     public ResponseEntity<ApiResponse<?>> reviews(@PathVariable Long id) {
         return productService.getById(id)
@@ -43,6 +62,13 @@ public class ProductController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found")));
     }
 
+    /**
+     * Add a review for an individual product as a buyer signed in to the application
+     *
+     * @param id identifies a product in the database
+     * @param reviewRequest includes comment, rating, and date
+     * @return a status message
+     **/
     @PostMapping(path = "/{id}/reviews/add")
     public ResponseEntity<ApiResponse<String>> addReviews(@PathVariable Long id, @RequestBody ReviewRequest reviewRequest, HttpSession httpSession) {
         Buyer reviewer = (Buyer) httpSession.getAttribute("user");
@@ -57,6 +83,11 @@ public class ProductController {
                 }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("product with id: " + id + " not found")));
     }
 
+    /**
+     * Get all the different categories of products
+     *
+     * @return a list of all categories
+     **/
     @GetMapping(path = "/categories")
     public ResponseEntity<ApiResponse<?>> categories() {
         return ResponseEntity.ok(ApiResponse.success(productService.getCategories()));

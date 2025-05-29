@@ -27,6 +27,12 @@ public class BuyerController {
         return ResponseEntity.status(httpStatus).body(ApiResponse.error(errorMessage));
     }
 
+    /**
+     * View the cart of the buyer signed in to the application
+     *
+     * @return total amount in cart and an array of cart items (product (id, name, price, image url), quantity,
+     * total price)
+     **/
     @GetMapping(path = "/cart")
     public ResponseEntity<ApiResponse<?>> getCart(HttpSession httpSession) {
         try {
@@ -40,6 +46,12 @@ public class BuyerController {
         }
     }
 
+    /**
+     * Add product(s) to the cart of the buyer signed in to the application
+     *
+     * @param cartRequest contains product's id and request quantity
+     * @return a status message
+     **/
     @PostMapping(path = "/cart/add")
     public ResponseEntity<ApiResponse<?>> addToCart(@RequestBody CartRequest cartRequest, HttpSession httpSession) {
         try {
@@ -55,6 +67,12 @@ public class BuyerController {
         }
     }
 
+    /**
+     * Remove product(s) from the cart of the buyer signed in to the application
+     *
+     * @param cartRequest contains product's id and request quantity
+     * @return a status message
+     **/
     @PostMapping(path = "/cart/remove")
     public ResponseEntity<ApiResponse<?>> removeFromCart(@RequestBody CartRequest cartRequest, HttpSession httpSession) {
         try {
@@ -67,6 +85,11 @@ public class BuyerController {
         }
     }
 
+    /**
+     * Clear all items from the cart of the buyer signed in to the application
+     *
+     * @return a status message
+     **/
     @PostMapping(path = "/cart/clear")
     public ResponseEntity<ApiResponse<?>> clearCart(HttpSession httpSession) {
         try {
@@ -82,6 +105,11 @@ public class BuyerController {
         }
     }
 
+    /**
+     * View the total price of all items in the cart of the buyer signed in to the application
+     *
+     * @return the total price of the cart
+     **/
     @GetMapping(path = "/cart/amount")
     public ResponseEntity<ApiResponse<?>> getCartAmount(HttpSession httpSession) {
         try {
