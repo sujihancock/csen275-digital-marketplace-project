@@ -10,6 +10,7 @@ import AddProduct from './pages/AddProduct';
 import ManageProducts from './pages/ManageProducts';
 import ProductReviews from './pages/ProductReviews';
 import { UserProvider } from './context/UserContext';
+import { CartProvider } from './context/CartContext';
 import { Routes, Route } from 'react-router-dom';
 
 
@@ -17,18 +18,20 @@ function App() {
    return (
     <Router>
       <UserProvider>
-        <div className="App">
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signin" element={<Signin />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/add-product" element={<AddProduct />} />
-            <Route path="/manage-products" element={<ManageProducts />} />
-            <Route path="/product-reviews" element={<ProductReviews />} />
-          </Routes>
-        </div>
+        <CartProvider>
+          <div className="App">
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signin" element={<Signin />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/manage-products" element={<ManageProducts />} />
+              <Route path="/product-reviews" element={<ProductReviews />} />
+            </Routes>
+          </div>
+        </CartProvider>
       </UserProvider>
     </Router>
   );

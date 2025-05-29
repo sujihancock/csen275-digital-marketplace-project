@@ -19,6 +19,9 @@ public class Product {
     private String description;
     private Double price;
     private String imageUrl;
+    
+    @Column(name = "quantity", nullable = true)
+    private Integer quantity;
 
     public enum Category {
         JEWELRY,
@@ -45,7 +48,7 @@ public class Product {
     @JoinColumn(name = "seller_id", referencedColumnName = "user_id")
     private Seller seller;
 
-    public record Dto(Long id, String name, String description, Double price, String imageUrl, User.Summary seller, List<ProductReview.Dto> reviews) {
+    public record Dto(Long id, String name, String description, Double price, String imageUrl, String category, Integer quantity, User.Summary seller, List<ProductReview.Dto> reviews) {
     }
 
     public record Summary(Long id, String name, Double price, String imageUrl) {
@@ -62,6 +65,17 @@ public class Product {
         this.seller = seller;
         this.imageUrl = imageUrl;
         this.category = category;
+        this.quantity = 0; // Default quantity
+    }
+
+    public Product(String name, String description, Double price, Seller seller, String imageUrl, Category category, Integer quantity) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.seller = seller;
+        this.imageUrl = imageUrl;
+        this.category = category;
+        this.quantity = quantity;
     }
 
     // Getters and Setters
@@ -95,6 +109,14 @@ public class Product {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public Seller getSeller() {
@@ -151,6 +173,36 @@ public class Product {
     }
 
     public Dto convertToDto() {
-        return new Dto(id, name, description, price, imageUrl, seller.summarize(), reviews.stream().map(ProductReview::convertToDto).toList());
+        // Ensure quantity is never null
+        Integer safeQuantity = quantity != null ? quantity : 0;
+        
+        // Safely handle category - convert to string or use default
+        String categoryString = category != null ? category.name() : "OTHER";
+        
+        // Ensure seller exists and can be converted
+        User.Summary sellerSummary = null;
+        if (seller != null) {
+            try {
+                sellerSummary = seller.summarize();
+            } catch (Exception e) {
+                // Handle case where seller summarization fails
+                sellerSummary = null;
+            }
+        }
+        
+        // Ensure reviews list is never null
+        List<ProductReview.Dto> reviewDtos = new ArrayList<>();
+        if (reviews != null) {
+            try {
+                reviewDtos = reviews.stream()
+                    .map(ProductReview::convertToDto)
+                    .toList();
+            } catch (Exception e) {
+                // Handle case where review conversion fails
+                reviewDtos = new ArrayList<>();
+            }
+        }
+        
+        return new Dto(id, name, description, price, imageUrl, categoryString, safeQuantity, sellerSummary, reviewDtos);
     }
 }

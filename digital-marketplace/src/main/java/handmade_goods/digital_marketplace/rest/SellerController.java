@@ -1,6 +1,8 @@
 package handmade_goods.digital_marketplace.rest;
 
 import handmade_goods.digital_marketplace.model.product.AddRequest;
+import handmade_goods.digital_marketplace.model.product.Product;
+import handmade_goods.digital_marketplace.model.product.UpdateRequest;
 import handmade_goods.digital_marketplace.model.review.ReviewRequest;
 import handmade_goods.digital_marketplace.model.user.Buyer;
 import handmade_goods.digital_marketplace.model.user.Seller;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/sellers")
@@ -55,11 +59,15 @@ public class SellerController {
         }
 
         try {
-            return ResponseEntity.ok(ApiResponse.success(sellerService.getProducts((Seller) seller)));
+            System.out.println("DEBUG: Fetching products for seller: " + seller.getId());
+            List<Product.Dto> products = sellerService.getProducts((Seller) seller);
+            System.out.println("DEBUG: Found " + products.size() + " products");
+            return ResponseEntity.ok(ApiResponse.success(products));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
+            System.err.println("ERROR in viewProducts: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Error fetching products: " + e.getMessage()));
         }
-
     }
 
     /**
@@ -78,6 +86,28 @@ public class SellerController {
         try {
             sellerService.addProduct((Seller) seller, productRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("product added"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    /**
+     * Update a product of the seller signed in to the application
+     *
+     * @param id identifies a product in the database
+     * @param updateRequest contains name, description, price, image url, category, quantity
+     * @return a status message
+     **/
+    @PutMapping(path = "/products/{id}")
+    public ResponseEntity<ApiResponse<String>> updateProduct(@PathVariable Long id, @RequestBody UpdateRequest updateRequest, HttpSession httpSession) {
+        User seller = (User) httpSession.getAttribute("user");
+        if (seller == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("not logged in"));
+        }
+
+        try {
+            sellerService.updateProduct((Seller) seller, id, updateRequest);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("product updated"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }

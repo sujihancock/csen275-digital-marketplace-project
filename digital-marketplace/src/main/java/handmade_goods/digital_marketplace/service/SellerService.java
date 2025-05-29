@@ -2,6 +2,7 @@ package handmade_goods.digital_marketplace.service;
 
 import handmade_goods.digital_marketplace.model.product.AddRequest;
 import handmade_goods.digital_marketplace.model.product.Product;
+import handmade_goods.digital_marketplace.model.product.UpdateRequest;
 import handmade_goods.digital_marketplace.model.review.ReviewRequest;
 import handmade_goods.digital_marketplace.model.review.SellerReview;
 import handmade_goods.digital_marketplace.model.user.Buyer;
@@ -39,7 +40,31 @@ public class SellerService {
     }
 
     public void addProduct(Seller seller, AddRequest productRequest) {
-        productRepository.save(new Product(productRequest.name(), productRequest.description(), productRequest.price(), seller, productRequest.imageUrl(), productRequest.category()));
+        Product product = new Product(
+            productRequest.name(), 
+            productRequest.description(), 
+            productRequest.price(), 
+            seller, 
+            productRequest.imageUrl(), 
+            productRequest.category(), 
+            productRequest.quantity() != null ? productRequest.quantity() : 0
+        );
+        productRepository.save(product);
+    }
+
+    @Transactional
+    public void updateProduct(Seller seller, Long productId, UpdateRequest updateRequest) {
+        Optional<Product> productOpt = productRepository.findByIdAndSeller(productId, seller);
+        if (productOpt.isPresent()) {
+            Product product = productOpt.get();
+            if (updateRequest.name() != null) product.setName(updateRequest.name());
+            if (updateRequest.description() != null) product.setDescription(updateRequest.description());
+            if (updateRequest.price() != null) product.setPrice(updateRequest.price());
+            if (updateRequest.imageUrl() != null) product.setImageUrl(updateRequest.imageUrl());
+            if (updateRequest.category() != null) product.setCategory(updateRequest.category());
+            if (updateRequest.quantity() != null) product.setQuantity(updateRequest.quantity());
+            productRepository.save(product);
+        }
     }
 
     @Transactional
@@ -56,6 +81,6 @@ public class SellerService {
     }
 
     public List<Product.Dto> getProducts(Seller seller) {
-        return seller.getProducts().stream().map(Product::convertToDto).toList();
+        return productRepository.findBySeller(seller).stream().map(Product::convertToDto).toList();
     }
 }
