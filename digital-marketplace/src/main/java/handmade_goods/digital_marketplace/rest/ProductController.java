@@ -31,7 +31,7 @@ public class ProductController {
      * @param searchRequest contains an array of keywords and an array of categories
      * @return a list of search results, each containing a product's id, name, price, and image url
      **/
-    @GetMapping(path = "/search")
+    @PostMapping(path = "/search")
     public ResponseEntity<ApiResponse<List<Product.Summary>>> search(@RequestBody SearchRequest searchRequest) {
         return ResponseEntity.ok(ApiResponse.success(productService.search(searchRequest)));
     }
