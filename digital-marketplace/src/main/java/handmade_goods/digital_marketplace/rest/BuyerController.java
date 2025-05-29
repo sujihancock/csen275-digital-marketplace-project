@@ -29,6 +29,7 @@ public class BuyerController {
 
     /**
      * View the cart of the buyer signed in to the application
+     * Now loads persistent cart items from database
      *
      * @return total amount in cart and an array of cart items (product (id, name, price, image url), quantity,
      * total price)
@@ -40,7 +41,9 @@ public class BuyerController {
             if (buyer == null) {
                 throw new RuntimeException("not logged in");
             }
-            return ResponseEntity.ok(ApiResponse.success(buyerService.getCartItems(buyer.getCart())));
+            
+            // Load cart from database and return persistent cart items
+            return ResponseEntity.ok(ApiResponse.success(buyerService.getPersistentCartItems(buyer)));
         } catch (Exception e) {
             return handleExceptions(e);
         }
@@ -48,6 +51,7 @@ public class BuyerController {
 
     /**
      * Add product(s) to the cart of the buyer signed in to the application
+     * Now saves to database for persistence
      *
      * @param cartRequest contains product's id and request quantity
      * @return a status message
@@ -59,8 +63,14 @@ public class BuyerController {
             if (buyer == null) {
                 throw new RuntimeException("not logged in");
             }
+            
+            // Add to persistent cart (database)
+            buyerService.addItemToPersistentCart(buyer, cartRequest);
+            
+            // Also update in-memory cart for backward compatibility
             buyerService.addItem(buyer.getCart(), cartRequest);
             httpSession.setAttribute("user", buyer);
+            
             return ResponseEntity.ok(ApiResponse.success("product added to cart"));
         } catch (Exception e) {
             return handleExceptions(e);
@@ -69,6 +79,7 @@ public class BuyerController {
 
     /**
      * Remove product(s) from the cart of the buyer signed in to the application
+     * Now removes from database for persistence
      *
      * @param cartRequest contains product's id and request quantity
      * @return a status message
@@ -77,9 +88,18 @@ public class BuyerController {
     public ResponseEntity<ApiResponse<?>> removeFromCart(@RequestBody CartRequest cartRequest, HttpSession httpSession) {
         try {
             Buyer buyer = (Buyer) httpSession.getAttribute("user");
+            if (buyer == null) {
+                throw new RuntimeException("not logged in");
+            }
+            
+            // Remove from persistent cart (database)
+            buyerService.removeItemFromPersistentCart(buyer, cartRequest);
+            
+            // Also update in-memory cart for backward compatibility
             buyerService.removeItem(buyer.getCart(), cartRequest);
             httpSession.setAttribute("user", buyer);
-            return ResponseEntity.ok(ApiResponse.success("product removed cart"));
+            
+            return ResponseEntity.ok(ApiResponse.success("product removed from cart"));
         } catch (Exception e) {
             return handleExceptions(e);
         }
@@ -87,6 +107,7 @@ public class BuyerController {
 
     /**
      * Clear all items from the cart of the buyer signed in to the application
+     * Now clears database for persistence
      *
      * @return a status message
      **/
@@ -97,9 +118,15 @@ public class BuyerController {
             if (buyer == null) {
                 throw new RuntimeException("not logged in");
             }
+            
+            // Clear persistent cart (database)
+            buyerService.clearPersistentCart(buyer);
+            
+            // Also clear in-memory cart for backward compatibility
             buyerService.clearCart(buyer.getCart());
             httpSession.setAttribute("user", buyer);
-            return ResponseEntity.ok(ApiResponse.success("product added to cart"));
+            
+            return ResponseEntity.ok(ApiResponse.success("cart cleared"));
         } catch (Exception e) {
             return handleExceptions(e);
         }
@@ -107,6 +134,7 @@ public class BuyerController {
 
     /**
      * View the total price of all items in the cart of the buyer signed in to the application
+     * Now calculates from persistent cart items
      *
      * @return the total price of the cart
      **/
@@ -117,7 +145,9 @@ public class BuyerController {
             if (buyer == null) {
                 throw new RuntimeException("not logged in");
             }
-            return ResponseEntity.ok(ApiResponse.success(buyer.getCart().getAmount()));
+            
+            // Get amount from persistent cart
+            return ResponseEntity.ok(ApiResponse.success(buyerService.getPersistentCartItems(buyer).totalAmount()));
         } catch (Exception e) {
             return handleExceptions(e);
         }

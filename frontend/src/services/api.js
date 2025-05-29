@@ -27,4 +27,23 @@ export const users = {
     logout: () => api.post(`/users/logout`),
 };
 
+// Cart API - Using existing backend endpoints
+export const cart = {
+    getCart: () => api.get('/buyers/cart'),
+    addToCart: (productId, quantity = 1) => api.post('/buyers/cart/add', { id: productId, quantity }),
+    removeFromCart: (productId, quantity = 1) => api.post('/buyers/cart/remove', { id: productId, quantity }),
+    clearCart: () => api.post('/buyers/cart/clear'),
+    getCartAmount: () => api.get('/buyers/cart/amount'),
+};
+
+// Payment API
+export const payment = {
+    checkout: () => api.get('/payment/checkout'),
+};
+
+// Orders API
+export const orders = {
+    saveOrder: () => api.get('/orders/save'),
+};
+
 export default api; 

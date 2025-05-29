@@ -18,6 +18,10 @@ public class Buyer extends User {
     private List<Order> orders = new ArrayList<>();
 
     @JsonIgnore
+    @OneToMany(mappedBy = "buyer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
+
+    @JsonIgnore
     @Transient
     private Cart cart = new Cart();
 
@@ -49,6 +53,28 @@ public class Buyer extends User {
 
     public void addOrder(Order order) {
         orders.add(order);
+    }
+
+    public List<CartItem> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
+    }
+
+    public void addCartItem(CartItem cartItem) {
+        cartItems.add(cartItem);
+        cartItem.setBuyer(this);
+    }
+
+    public void removeCartItem(CartItem cartItem) {
+        cartItems.remove(cartItem);
+        cartItem.setBuyer(null);
+    }
+
+    public void clearCartItems() {
+        cartItems.clear();
     }
 
     public Dto convertToDto() {

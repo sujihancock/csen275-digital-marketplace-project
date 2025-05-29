@@ -7,6 +7,7 @@ import handmade_goods.digital_marketplace.model.user.LoginRequest;
 import handmade_goods.digital_marketplace.model.user.Seller;
 import handmade_goods.digital_marketplace.model.user.User;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
+import handmade_goods.digital_marketplace.service.BuyerService;
 import handmade_goods.digital_marketplace.service.StripeService;
 import handmade_goods.digital_marketplace.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +25,18 @@ public class UserController {
 
     private final UserService userService;
     private final StripeService stripeService;
+    private final BuyerService buyerService;
 
     @Autowired
-    public UserController(UserService userService, StripeService stripeService) {
+    public UserController(UserService userService, StripeService stripeService, BuyerService buyerService) {
         this.userService = userService;
         this.stripeService = stripeService;
+        this.buyerService = buyerService;
     }
 
     /**
      * Signs in the user into the application
+     * Now loads persistent cart for buyers
      *
      * @param loginRequest contains username and password
      * @return a status message
@@ -42,6 +46,13 @@ public class UserController {
         Optional<User> userOpt = userService.getByLoginCredentials(loginRequest);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
+            
+            // Load persistent cart for buyers
+            if (user instanceof Buyer) {
+                Buyer buyer = (Buyer) user;
+                buyerService.loadCartFromDatabase(buyer);
+            }
+            
             httpServletRequest.getSession().setAttribute("user", user);
             UserProfileDto profile = userService.getUserProfile(user);
             return ResponseEntity.ok(ApiResponse.success(profile, "user logged in"));
@@ -134,11 +145,20 @@ public class UserController {
 
     /**
      * Signs the user out of the application
+     * Now syncs cart to database before logout for buyers
      *
      * @return a status message
      **/
     @PostMapping(path = "/logout")
     public ResponseEntity<ApiResponse<String>> logout(HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute("user");
+        
+        // Sync cart to database before logout for buyers
+        if (user instanceof Buyer) {
+            Buyer buyer = (Buyer) user;
+            buyerService.syncCartToDatabase(buyer);
+        }
+        
         httpSession.removeAttribute("user");
         httpSession.invalidate();
         return ResponseEntity.ok(ApiResponse.success("user logged out"));

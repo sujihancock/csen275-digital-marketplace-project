@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import CheckoutButton from '../components/CheckoutButton';
+import AddToCartButton from '../components/AddToCartButton';
 import SearchBar from '../components/SearchBar';
 import CategoryFilter from '../components/CategoryFilter';
+import { useUser } from '../context/UserContext';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
+    const { user, isAuthenticated } = useUser();
 
     return (
         <div className="home-container">
@@ -24,7 +27,12 @@ const Home = () => {
                         <h3>{product.name}</h3>
                         <p>{product.description}</p>
                         <p>Price: ${product.price.toFixed(2)}</p>
-                        <CheckoutButton product={product} />
+                        <div className="product-buttons">
+                            {isAuthenticated && user?.role === 'buyer' && (
+                                <AddToCartButton product={product} />
+                            )}
+                            <CheckoutButton product={product} />
+                        </div>
                     </div>
                 ))}
             </div>
