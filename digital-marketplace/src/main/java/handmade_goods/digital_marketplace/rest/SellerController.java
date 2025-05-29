@@ -77,7 +77,7 @@ public class SellerController {
 
         try {
             sellerService.addProduct((Seller) seller, productRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("productRequest added"));
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("product added"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }
