@@ -1,27 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { cart } from "../services/api";
+import { useNavigate } from 'react-router-dom';
+import {useCart} from "../context/CartContext";
 
 export default function PaymentForm({ clientSecrets }) {
     const stripe = useStripe();
     const elements = useElements();
+    const navigate = useNavigate();
 
     const [message, setMessage] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
-    const [total, setTotal] = useState(0);
-
-    useEffect(() => {
-        totalAmount(); // Call it when component mounts
-    }, []);
-
-    const totalAmount = async () => {
-        try {
-            const response = await cart.getCartAmount();
-            setTotal(response.data.data); // Assuming this is the correct path
-        } catch (error) {
-            setMessage(`❌ Failed to load total: ${error.message}`);
-        }
-    };
+    const { totalAmount, clearCart } = useCart();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,7 +36,9 @@ export default function PaymentForm({ clientSecrets }) {
                 card: cardElement,
             });
 
-            if (pmError) throw new Error(`Payment Method Error: ${pmError.message}`);
+            if (pmError) {
+                throw new Error(`Payment Method Error: ${pmError.message}`);
+            }
 
             for (const { clientSecret, sellerStripeId } of clientSecrets) {
                 setMessage(`Processing payment for seller ${sellerStripeId}...`);
@@ -60,9 +51,9 @@ export default function PaymentForm({ clientSecrets }) {
                     throw new Error(`Payment failed for seller ${sellerStripeId}: ${confirmError.message}`);
                 }
             }
-
             setMessage("✅ Payment successful! Thank you for your purchase.");
-            await cart.clearCart();
+            await clearCart();
+            setTimeout(() => navigate('/order-history'), 1500);
         } catch (err) {
             setMessage(`❌ ${err.message}`);
         } finally {
@@ -85,7 +76,7 @@ export default function PaymentForm({ clientSecrets }) {
             />
 
             <div className="make-purchase">
-                <h3>Total: ${total.toFixed(2)}</h3>
+                <h3>Total: ${totalAmount}</h3>
                 <button type="submit" disabled={!stripe || isProcessing}>
                     {isProcessing ? "Processing..." : "Pay"}
                 </button>

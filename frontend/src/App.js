@@ -13,6 +13,8 @@ import { UserProvider } from './context/UserContext';
 import { CartProvider } from './context/CartContext';
 import { Routes, Route } from 'react-router-dom';
 import Payment from "./pages/Payment";
+import OrderHistory from "./pages/OrderHistory";
+import Order from './pages/Order';
 
 
 function App() {
@@ -30,7 +32,9 @@ function App() {
               <Route path="/add-product" element={<AddProduct />} />
               <Route path="/manage-products" element={<ManageProducts />} />
               <Route path="/product-reviews" element={<ProductReviews />} />
-                <Route path="/payment" element={<Payment />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/order-history" element={<OrderHistory />} />
+              <Route path="/orders/:id" element={<Order />} />
             </Routes>
           </div>
         </CartProvider>

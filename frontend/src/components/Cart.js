@@ -36,7 +36,10 @@ const Cart = ({ isOpen, onClose }) => {
             const response = await payment.checkout();
             
             if (response.data.status === 'success') {
-                await orders.saveOrder();
+                const orderResponse = await orders.saveOrder();
+                if (orderResponse && orderResponse.data.status === 'error') {
+                     throw new Error('Failed to set up order');
+                }
 
                 const paymentData = response.data.data;
 

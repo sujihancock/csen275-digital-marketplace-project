@@ -43,7 +43,15 @@ export const payment = {
 
 // Orders API
 export const orders = {
-    saveOrder: () => api.get('/orders/save'),
+    saveOrder: () => api.post('/orders/save'),
+    getOrderHistory: () => api.get('/orders/history'),
+    getOrder: (id) => api.get(`/orders/${id}`),
 };
+
+// Seller API
+export const sellers = {
+    getCustomerOrders: () => api.get('/sellers/customer-orders'),
+    getReviews: () => api.get('/sellers/reviews'),
+}
 
 export default api; 
