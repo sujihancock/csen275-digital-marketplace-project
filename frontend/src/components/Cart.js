@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useUser } from '../context/UserContext';
 import { payment, orders } from '../services/api';
+import { useNavigate } from "react-router-dom";
 
 const Cart = ({ isOpen, onClose }) => {
     const { cartItems, totalAmount, removeFromCart, clearCart, loading, addToCart } = useCart();
     const { user } = useUser();
     const [checkingOut, setCheckingOut] = useState(false);
+    const navigate = useNavigate();
 
     const handleRemoveItem = async (productId, quantity) => {
         await removeFromCart(productId, quantity);
@@ -34,19 +36,12 @@ const Cart = ({ isOpen, onClose }) => {
             const response = await payment.checkout();
             
             if (response.data.status === 'success') {
-                // Save the order before redirecting to payment
                 await orders.saveOrder();
-                
-                // The backend returns payment intents for each seller
+
                 const paymentData = response.data.data;
-                
-                // For simplicity, we'll handle the first payment intent
-                // In a real implementation, you might want to handle multiple sellers
+
                 if (paymentData && Object.keys(paymentData).length > 0) {
-                    const firstClientSecret = Object.values(paymentData)[0];
-                    // You would typically redirect to Stripe's payment page here
-                    // For now, we'll just show a success message
-                    alert('Redirecting to payment...');
+                    navigate('/payment', { state: { paymentData } });
                     onClose();
                 } else {
                     alert('No payment required');

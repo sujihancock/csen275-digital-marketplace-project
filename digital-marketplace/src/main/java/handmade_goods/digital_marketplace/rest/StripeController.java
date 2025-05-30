@@ -46,7 +46,7 @@ public class StripeController {
         try {
             Buyer buyer = (Buyer) httpSession.getAttribute("user");
             Map<String, Double> paymentsBySeller = buyerService.calculatePaymentsToSellers(buyer.getCart());
-            return ResponseEntity.ok(ApiResponse.success(stripeService.handleCheckOut(paymentsBySeller)));
+            return ResponseEntity.ok(ApiResponse.success(stripeService.handleCheckOut(paymentsBySeller, buyer)));
         } catch (RuntimeException | StripeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }

@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Buyer extends User {
 
+    private String stripeCustomerId;
+
     @JsonIgnore
     @OneToMany(mappedBy = "buyer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
@@ -33,6 +35,14 @@ public class Buyer extends User {
 
     public Buyer(String username, String password, String email) {
         super(username, password, email);
+    }
+
+    public String getStripeCustomerId() {
+        return stripeCustomerId;
+    }
+
+    public void setStripeCustomerId(String stripeCustomerId) {
+        this.stripeCustomerId = stripeCustomerId;
     }
 
     public Cart getCart() {
