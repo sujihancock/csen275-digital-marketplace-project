@@ -1,45 +1,31 @@
 import React, { useState } from 'react';
+import CategoryFilter from './CategoryFilter';
 
-function SearchBar({ setProducts, selectedCategories }) {
-    const [keywords, setKeywords] = useState([]);
+function SearchBar({ onSearch, selectedCategories, setSelectedCategories }) {
+    const [input, setInput] = useState("");
 
-    const handleKeywordChange = async (e) => {
-        const value = e.target.value;
-        const terms = value.toLowerCase().split(' ');
-        setKeywords(terms);
-    }
-
-    const handleSubmit= (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        const searchRequest = {
-            keywords: keywords,
-            category: selectedCategories,
-        };
-
-        fetch('http://localhost:8080/api/products/search', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(searchRequest)
-        })
-            .then(response => response.json())
-            .then(data => setProducts(data.data))
-            .catch(err => console.log('Error fetching search results:', err));
-
-    }
+        const keywords = input.toLowerCase().split(" ").filter(word => word.trim() !== "");
+        onSearch(keywords, selectedCategories);
+    };
 
     return (
-       <div className="search-container">
-           <form onSubmit={handleSubmit}>
-               <input
-                   type='text'
-                   onChange={handleKeywordChange}
-               />
-               <button type="submit">Search</button>
-           </form>
-       </div>
+        <div className="search-container">
+            <form onSubmit={handleSubmit}>
+                <CategoryFilter
+                    selectedCategories={selectedCategories}
+                    setSelectedCategories={setSelectedCategories}
+                />
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Search products..."
+                />
+                <button type="submit">Search</button>
+            </form>
+        </div>
     );
 }
 
