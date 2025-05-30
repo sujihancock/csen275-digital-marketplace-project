@@ -12,6 +12,7 @@ import ProductReviews from './pages/ProductReviews';
 import { UserProvider } from './context/UserContext';
 import { CartProvider } from './context/CartContext';
 import { Routes, Route } from 'react-router-dom';
+import Payment from "./pages/Payment";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
               <Route path="/add-product" element={<AddProduct />} />
               <Route path="/manage-products" element={<ManageProducts />} />
               <Route path="/product-reviews" element={<ProductReviews />} />
+                <Route path="/payment" element={<Payment />} />
             </Routes>
           </div>
         </CartProvider>

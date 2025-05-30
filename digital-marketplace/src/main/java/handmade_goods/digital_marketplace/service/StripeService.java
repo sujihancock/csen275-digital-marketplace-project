@@ -4,10 +4,15 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.AccountLink;
+import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.AccountCreateParams;
 import com.stripe.param.AccountLinkCreateParams;
+import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.PaymentIntentCreateParams;
+import handmade_goods.digital_marketplace.model.user.Buyer;
+import handmade_goods.digital_marketplace.repository.user.BuyerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +28,13 @@ public class StripeService {
 
     @Value("${client.url}")
     private String clientUrl;
+
+    private final BuyerRepository buyerRepository;
+
+    @Autowired
+    public StripeService(BuyerRepository buyerRepository) {
+        this.buyerRepository = buyerRepository;
+    }
 
 //    public StripeResponse checkoutProducts(ProductRequest request) {
 //        Stripe.apiKey = secretKey;
@@ -75,13 +87,30 @@ public class StripeService {
         return new StripeAccount(account.getId(), accountLink.getUrl());
     }
 
+    private Customer createCustomer(String email, String name) throws StripeException {
+        CustomerCreateParams params = CustomerCreateParams.builder()
+                .setEmail(email)
+                .setName(name)
+                .build();
+
+        return Customer.create(params);
+    }
+
     public record StripeClientSecret(String sellerStripeId, String clientSecret) {
 
     }
 
-    public List<StripeClientSecret> handleCheckOut(Map<String, Double> paymentsBySeller) throws StripeException {
+    public List<StripeClientSecret> handleCheckOut(Map<String, Double> paymentsBySeller, Buyer buyer) throws StripeException {
         Stripe.apiKey = secretKey;
         List<StripeClientSecret> clientSecrets = new ArrayList<>();
+
+        String stripeCustomerId = buyer.getStripeCustomerId();
+        if (stripeCustomerId == null) {
+            Customer customer = createCustomer(buyer.getEmail(), buyer.getUsername());
+            stripeCustomerId = customer.getId();
+            buyer.setStripeCustomerId(stripeCustomerId);
+            buyerRepository.save(buyer);
+        }
 
         for (Map.Entry<String, Double> entry : paymentsBySeller.entrySet()) {
             String sellerStripeId = entry.getKey();
@@ -89,11 +118,13 @@ public class StripeService {
                     .setAmount(Math.round(entry.getValue() * 100))
                     .setCurrency("usd")
                     .addPaymentMethodType("card")
+                    .setCustomer(stripeCustomerId)
                     .setTransferData(
                             PaymentIntentCreateParams.TransferData.builder()
                                     .setDestination(sellerStripeId)
                                     .build()
                     )
+                    .setSetupFutureUsage(PaymentIntentCreateParams.SetupFutureUsage.OFF_SESSION)
                     .build();
 
             clientSecrets.add(new StripeClientSecret(sellerStripeId, PaymentIntent.create(paymentParams).getClientSecret()));
