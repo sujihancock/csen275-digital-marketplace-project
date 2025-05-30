@@ -45,6 +45,9 @@ public class StripeController {
     public ResponseEntity<ApiResponse<?>> checkout(HttpSession httpSession) {
         try {
             Buyer buyer = (Buyer) httpSession.getAttribute("user");
+            if (buyer == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("not logged in"));
+            }
             Map<String, Double> paymentsBySeller = buyerService.calculatePaymentsToSellers(buyer.getCart());
             return ResponseEntity.ok(ApiResponse.success(stripeService.handleCheckOut(paymentsBySeller, buyer)));
         } catch (RuntimeException | StripeException e) {

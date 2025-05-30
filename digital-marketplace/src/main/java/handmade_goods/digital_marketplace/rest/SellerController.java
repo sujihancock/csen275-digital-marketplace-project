@@ -173,4 +173,24 @@ public class SellerController {
                     return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("review added"));
                 }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(notFound(id))));
     }
+
+    /**
+     * Returns all customer orders of products from the seller signed in to the application
+     *
+     * @return an array of orders (id, status, date, amount, buyer (id, username), an array of order items (product (id,
+     * name, price, image, url), quantity, subtotal)
+     **/
+    @GetMapping(path = "/customer-orders")
+    public ResponseEntity<ApiResponse<?>> getCustomerOrders(HttpSession httpSession) {
+        User seller = (User) httpSession.getAttribute("user");
+        if (seller == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("not logged in"));
+        }
+
+        try {
+            return ResponseEntity.ok(ApiResponse.success(sellerService.getCustomerOrders((Seller) seller)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
+        }
+    }
 }

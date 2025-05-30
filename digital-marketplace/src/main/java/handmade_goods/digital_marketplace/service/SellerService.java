@@ -1,5 +1,7 @@
 package handmade_goods.digital_marketplace.service;
 
+import handmade_goods.digital_marketplace.model.order.Order;
+import handmade_goods.digital_marketplace.model.order.OrderItem;
 import handmade_goods.digital_marketplace.model.product.AddRequest;
 import handmade_goods.digital_marketplace.model.product.Product;
 import handmade_goods.digital_marketplace.model.product.UpdateRequest;
@@ -7,6 +9,7 @@ import handmade_goods.digital_marketplace.model.review.ReviewRequest;
 import handmade_goods.digital_marketplace.model.review.SellerReview;
 import handmade_goods.digital_marketplace.model.user.Buyer;
 import handmade_goods.digital_marketplace.model.user.Seller;
+import handmade_goods.digital_marketplace.repository.order.OrderRepository;
 import handmade_goods.digital_marketplace.repository.product.ProductRepository;
 import handmade_goods.digital_marketplace.repository.review.SellerReviewRepository;
 import handmade_goods.digital_marketplace.repository.user.SellerRepository;
@@ -23,12 +26,14 @@ public class SellerService {
     private final SellerRepository sellerRepository;
     private final ProductRepository productRepository;
     private final SellerReviewRepository sellerReviewRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
-    public SellerService(SellerRepository sellerRepository, ProductRepository productRepository, SellerReviewRepository sellerReviewRepository) {
+    public SellerService(SellerRepository sellerRepository, ProductRepository productRepository, SellerReviewRepository sellerReviewRepository,OrderRepository orderRepository) {
         this.sellerRepository = sellerRepository;
         this.productRepository = productRepository;
         this.sellerReviewRepository = sellerReviewRepository;
+        this.orderRepository = orderRepository;
     }
 
     public Optional<Seller> getById(Long id) {
@@ -83,4 +88,18 @@ public class SellerService {
     public List<Product.Dto> getProducts(Seller seller) {
         return productRepository.findBySeller(seller).stream().map(Product::convertToDto).toList();
     }
+
+    public List<Order.Dto> getCustomerOrders(Seller seller) {
+        List<Order> orders = orderRepository.findOrdersWithItemsBySeller(seller);
+
+        for (Order order : orders) {
+            List<OrderItem> filteredItems = order.getOrderItems().stream()
+                    .filter(orderItem -> orderItem.getProduct().getSeller().getId().equals(seller.getId()))
+                    .toList();
+            order.setOrderItems(filteredItems);
+        }
+
+        return orders.stream().map(Order::convertToDto).toList();
+    }
+
 }
