@@ -17,3 +17,17 @@ reviews on products and sellers to build trust
 within the marketplace.
 
 Group members: Suji Hancock, Cedric Kwong, Zhengxin Tao
+
+## Instructions to run application
+Frontend:
+- ```cd frontend```
+- ```bash
+   npm start
+   ```
+Backend:
+- ```cd digital-marketplace```
+- ```bash
+  mvn clean
+  mvn package
+  java -jar target/digital-marketplace-0.0.1-SNAPSHOT.jar
+  ```
