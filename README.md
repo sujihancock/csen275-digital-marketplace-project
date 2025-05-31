@@ -19,15 +19,31 @@ within the marketplace.
 Group members: Suji Hancock, Cedric Kwong, Zhengxin Tao
 
 ## Instructions to run application
-Frontend:
-- ```cd frontend```
-- ```bash
-   npm start
-   ```
+
 Backend:
 - ```cd digital-marketplace```
+  - create .env file in the following format:
+    ```
+    MYSQL_URL=...
+    MYSQL_USER=...
+    MYSQL_PASSWORD=...
+    
+    STRIPE_API_KEY=sk_test_...
+    CLIENT_URL=http://localhost:3000
+    ```
+
 - ```bash
   mvn clean
   mvn package
   java -jar target/digital-marketplace-0.0.1-SNAPSHOT.jar
   ```
+
+Frontend:
+- ```cd frontend```
+    - create .env file in the following format:
+        ```
+        REACT_APP_STRIPE_PUBLIC_KEY=pk_test_...
+      ```
+- ```bash
+   npm start
+   ```
