@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useUser } from '../context/UserContext';
 import { useCart } from '../context/CartContext';
-import { users } from '../services/api';
+import { users, payment } from '../services/api';
 import { Link } from 'react-router-dom';
 import Cart from '../components/Cart';
 
@@ -13,6 +13,30 @@ const Profile = () => {
     const [newUsername, setNewUsername] = useState(user?.username || '');
     const [updateMessage, setUpdateMessage] = useState('');
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [stripeLogin, setStripeLogin] = useState('');
+    const [loadingStripeLogin, setLoadingStripeLogin] = useState(false);
+
+    useEffect(() => {
+        if (user?.role === 'seller') {
+            const fetchStripeLogin = async () => {
+                setLoadingStripeLogin(true);
+                try {
+                    const response = await payment.stripeLogin();
+                    if (response?.data?.status === 'success') {
+                        setStripeLogin(response.data.message);
+                    } else {
+                        console.error('Failed to fetch stripe login:', response.data.message);
+                    }
+                } catch (error) {
+                    console.error('Error fetching stripe login:', error.message);
+                }
+                setLoadingStripeLogin(false);
+            };
+            fetchStripeLogin();
+        } else {
+            setStripeLogin('');
+        }
+    }, [user]);
 
     if (!user) {
         return (
@@ -171,7 +195,9 @@ const Profile = () => {
                                     <Link to="/">
                                         <button className="action-btn">Browse Products</button>
                                     </Link>
-                                    <button className="action-btn">Order History</button>
+                                    <Link to="/order-history">
+                                        <button className="action-btn">Order History</button>
+                                    </Link>
                                     <button className="action-btn" onClick={handleCartClick}>
                                         Shopping Cart
                                         {cartItemCount > 0 && (
@@ -189,6 +215,8 @@ const Profile = () => {
                                     <li>Manage your product listings</li>
                                     <li>View product reviews</li>
                                     <li>Respond to customer reviews</li>
+                                    <li>View your customers' orders</li>
+                                    {stripeLogin && (<li>Login to Stripe to view transactions</li>)}
                                 </ul>
                                 <div className="quick-actions">
                                     <Link to="/add-product">
@@ -200,6 +228,15 @@ const Profile = () => {
                                     <Link to="/product-reviews">
                                         <button className="action-btn">View Reviews</button>
                                     </Link>
+                                    <Link to="/customer-orders">
+                                        <button className="action-btn">View Customer Orders</button>
+                                    </Link>
+                                    {stripeLogin && (
+                                        <Link to={stripeLogin}>
+                                            <button className="action-btn">Login to Stripe</button>
+                                        </Link>
+                                    )}
+
                                 </div>
                             </div>
                         )}

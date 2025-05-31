@@ -2,14 +2,8 @@ package handmade_goods.digital_marketplace.service;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Account;
-import com.stripe.model.AccountLink;
-import com.stripe.model.Customer;
-import com.stripe.model.PaymentIntent;
-import com.stripe.param.AccountCreateParams;
-import com.stripe.param.AccountLinkCreateParams;
-import com.stripe.param.CustomerCreateParams;
-import com.stripe.param.PaymentIntentCreateParams;
+import com.stripe.model.*;
+import com.stripe.param.*;
 import handmade_goods.digital_marketplace.model.user.Buyer;
 import handmade_goods.digital_marketplace.repository.user.BuyerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +79,15 @@ public class StripeService {
 
         AccountLink accountLink = AccountLink.create(accountLinkParams);
         return new StripeAccount(account.getId(), accountLink.getUrl());
+    }
+
+    public String stripeLogin(String stripeAccountId) throws StripeException {
+        Stripe.apiKey = secretKey;
+
+        LoginLinkCreateOnAccountParams params = LoginLinkCreateOnAccountParams.builder().build();
+        LoginLink loginLink = LoginLink.createOnAccount(stripeAccountId, params);
+
+        return loginLink.getUrl();
     }
 
     private Customer createCustomer(String email, String name) throws StripeException {

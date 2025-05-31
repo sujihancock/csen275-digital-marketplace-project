@@ -13,8 +13,7 @@ const api = axios.create({
 
 // Products API
 export const products = {
-    getAll: () => api.get('/products'),
-    getById: (id) => api.get(`/products/${id}`),
+    getProduct: (id) => api.get(`/products/${id}`),
 };
 
 // Users API
@@ -39,6 +38,7 @@ export const cart = {
 // Payment API
 export const payment = {
     checkout: () => api.get('/payment/checkout'),
+    stripeLogin: () => api.get('/payment/stripe-login')
 };
 
 // Orders API
@@ -52,6 +52,7 @@ export const orders = {
 export const sellers = {
     getCustomerOrders: () => api.get('/sellers/customer-orders'),
     getReviews: () => api.get('/sellers/reviews'),
+    getSellerStore: (id) => api.get(`/sellers/${id}`),
 }
 
 export default api; 

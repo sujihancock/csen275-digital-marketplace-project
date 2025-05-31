@@ -12,7 +12,7 @@ const OrderHistory = () => {
             const response = await orders.getOrderHistory();
             setOrderSummaries(response.data.data);
         } catch (error) {
-            console.log(`❌ Failed to load order history: ${error.message}`);
+            console.log(`Failed to load order history: ${error.message}`);
         }
     }
 

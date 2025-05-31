@@ -16,7 +16,7 @@ const Order = () => {
                     throw new Error(response.data.message);
                 }
             } catch (error) {
-                console.error(`❌ Failed to fetch order: ${error.message}`);
+                console.error(`Failed to fetch order: ${error.message}`);
             }
         };
 
@@ -24,11 +24,11 @@ const Order = () => {
     }, [id]);
 
     if (!order) {
-        return <div className="order-loading">Loading order #{id} details...</div>;
+        return <div className="order-loading">Loading order details...</div>;
     }
 
     return (
-        <div className="order">
+        <div className="order-container">
             <div className="order-details">
                 <h3>
                     Order #{order.id} - {new Date(order.date).toLocaleDateString()}

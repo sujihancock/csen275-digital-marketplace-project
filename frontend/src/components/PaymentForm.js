@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useNavigate } from 'react-router-dom';
-import {useCart} from "../context/CartContext";
+import { useCart } from "../context/CartContext";
 
 export default function PaymentForm({ clientSecrets }) {
     const stripe = useStripe();
@@ -51,11 +51,11 @@ export default function PaymentForm({ clientSecrets }) {
                     throw new Error(`Payment failed for seller ${sellerStripeId}: ${confirmError.message}`);
                 }
             }
-            setMessage("✅ Payment successful! Thank you for your purchase.");
+            setMessage("Payment successful! Thank you for your purchase.");
             await clearCart();
             setTimeout(() => navigate('/order-history'), 1500);
         } catch (err) {
-            setMessage(`❌ ${err.message}`);
+            setMessage(`${err.message}`);
         } finally {
             setIsProcessing(false);
         }
