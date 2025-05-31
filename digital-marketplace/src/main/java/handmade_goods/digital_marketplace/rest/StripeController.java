@@ -2,6 +2,7 @@ package handmade_goods.digital_marketplace.rest;
 
 import com.stripe.exception.StripeException;
 import handmade_goods.digital_marketplace.model.user.Buyer;
+import handmade_goods.digital_marketplace.model.user.Seller;
 import handmade_goods.digital_marketplace.payload.ApiResponse;
 import handmade_goods.digital_marketplace.service.BuyerService;
 import handmade_goods.digital_marketplace.service.StripeService;
@@ -50,6 +51,24 @@ public class StripeController {
             }
             Map<String, Double> paymentsBySeller = buyerService.calculatePaymentsToSellers(buyer.getCart());
             return ResponseEntity.ok(ApiResponse.success(stripeService.handleCheckOut(paymentsBySeller, buyer)));
+        } catch (RuntimeException | StripeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    /**
+     * Gets a one-time login Stripe link for the seller signed in to the application
+     *
+     * @return a one-time login link for Stripe
+     **/
+    @GetMapping("/stripe-login")
+    public ResponseEntity<ApiResponse<?>> stripeLogin(HttpSession httpSession) {
+        try {
+            Seller seller = (Seller) httpSession.getAttribute("user");
+            if (seller == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("not logged in"));
+            }
+            return ResponseEntity.ok(ApiResponse.success(stripeService.stripeLogin(seller.getStripeAccountId())));
         } catch (RuntimeException | StripeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }

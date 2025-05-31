@@ -15,6 +15,9 @@ import { Routes, Route } from 'react-router-dom';
 import Payment from "./pages/Payment";
 import OrderHistory from "./pages/OrderHistory";
 import Order from './pages/Order';
+import Product from './pages/Product';
+import SellerStore from './pages/SellerStore'
+import CustomerOrders from "./pages/CustomerOrders";
 
 
 function App() {
@@ -30,6 +33,9 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/products/:id" element={<Product />} />
+              <Route path= "/seller-store/:id" element={<SellerStore />} />
+              <Route path="/customer-orders" element={<CustomerOrders />} />
               <Route path="/manage-products" element={<ManageProducts />} />
               <Route path="/product-reviews" element={<ProductReviews />} />
               <Route path="/payment" element={<Payment />} />

@@ -4,6 +4,8 @@ import CheckoutButton from '../components/CheckoutButton';
 import AddToCartButton from '../components/AddToCartButton';
 import SearchBar from '../components/SearchBar';
 import { useUser } from '../context/UserContext';
+import { Link } from 'react-router-dom';
+
 
 const Home = () => {
     const [products, setProducts] = useState([]);
@@ -58,7 +60,9 @@ const Home = () => {
                 {products.map(product => (
                     <div key={product.id} className="product-card">
                         <img src={product.imageUrl} alt={product.name} width="150"/>
-                        <h3>{product.name}</h3>
+                        <h3>
+                            <Link to={`/products/${product.id}`}>{product.name}</Link>
+                        </h3>
                         {/*<p>{product.description}</p>*/}
                         <p>Price: ${product.price.toFixed(2)}</p>
                         <div className="product-buttons">
