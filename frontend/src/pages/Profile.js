@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { useUser } from '../context/UserContext';
 import { useCart } from '../context/CartContext';
-import { users, payment } from '../services/api';
+import { users, payment} from '../services/api';
 import { Link } from 'react-router-dom';
 import Cart from '../components/Cart';
 
@@ -195,6 +195,9 @@ const Profile = () => {
                                     <Link to="/">
                                         <button className="action-btn">Browse Products</button>
                                     </Link>
+                                    <Link to={`/write-review/1`}>
+                                        <button className="action-btn">Write a Review</button>
+                                    </Link>
                                     <Link to="/order-history">
                                         <button className="action-btn">Order History</button>
                                     </Link>
@@ -225,7 +228,7 @@ const Profile = () => {
                                     <Link to="/manage-products">
                                         <button className="action-btn">Manage Products</button>
                                     </Link>
-                                    <Link to="/product-reviews">
+                                    <Link to="/view-review">
                                         <button className="action-btn">View Reviews</button>
                                     </Link>
                                     <Link to="/customer-orders">
