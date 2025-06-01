@@ -147,7 +147,7 @@ public class SellerController {
         }
 
         try {
-            return ResponseEntity.ok(ApiResponse.success(sellerService.getReviews((Seller) seller)));
+            return ResponseEntity.ok(ApiResponse.success(sellerService.getReviews(seller.getId())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));
         }

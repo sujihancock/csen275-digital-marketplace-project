@@ -53,6 +53,9 @@ const SellerStore = () => {
                 </div>
                 <div className="seller-reviews">
                     <h4>Reviews:</h4>
+                    <Link to={`/seller-store/${id}/add-review`}>
+                        <button className="action-btn">Leave a Review</button>
+                    </Link>
                     {seller.reviews && seller.reviews.length > 0 ? (
                         seller.reviews.map((review) => (
                             <div className="review-container" key={review.id}>

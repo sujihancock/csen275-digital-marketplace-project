@@ -225,8 +225,8 @@ const Profile = () => {
                                     <Link to="/manage-products">
                                         <button className="action-btn">Manage Products</button>
                                     </Link>
-                                    <Link to="/product-reviews">
-                                        <button className="action-btn">View Reviews</button>
+                                    <Link to="/profile/reviews">
+                                        <button className="action-btn">View Your Reviews</button>
                                     </Link>
                                     <Link to="/customer-orders">
                                         <button className="action-btn">View Customer Orders</button>

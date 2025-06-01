@@ -58,6 +58,9 @@ const Product = () => {
                 </div>
                 <p>{product.description}</p>
                 <h4>Reviews:</h4>
+                <Link to={`/products/${id}/add-review`}>
+                    <button className="action-btn">Leave a Review</button>
+                </Link>
                 {product.reviews && product.reviews.length > 0 ? (
                     product.reviews.map((review) => (
                         <div className="review-container" key={review.id}>

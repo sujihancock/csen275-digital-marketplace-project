@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import CheckoutButton from '../components/CheckoutButton';
 import AddToCartButton from '../components/AddToCartButton';
 import SearchBar from '../components/SearchBar';
 import { useUser } from '../context/UserContext';
@@ -63,13 +62,11 @@ const Home = () => {
                         <h3>
                             <Link to={`/products/${product.id}`}>{product.name}</Link>
                         </h3>
-                        {/*<p>{product.description}</p>*/}
                         <p>Price: ${product.price.toFixed(2)}</p>
                         <div className="product-buttons">
                             {isAuthenticated && user?.role === 'buyer' && (
                                 <AddToCartButton product={product} />
                             )}
-                            <CheckoutButton product={product} />
                         </div>
                     </div>
                 ))}
