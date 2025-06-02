@@ -51,7 +51,7 @@ public class Product {
     public record Dto(Long id, String name, String description, Double price, String imageUrl, String category, Integer quantity, User.Summary seller, List<ProductReview.Dto> reviews) {
     }
 
-    public record Summary(Long id, String name, Double price, String imageUrl) {
+    public record Summary(Long id, String name, Double price, String imageUrl, Integer quantity) {
     }
 
     // Constructors
@@ -169,7 +169,7 @@ public class Product {
     }
 
     public Summary summarize() {
-        return new Summary(id, name, price, imageUrl);
+        return new Summary(id, name, price, imageUrl, quantity);
     }
 
     public Dto convertToDto() {

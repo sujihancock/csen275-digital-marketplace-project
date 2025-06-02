@@ -2,6 +2,38 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+# Stripe Test Setup Guide
+
+This guide explains how to set up Stripe in test mode to use the Stripe API.
+
+1. Create a Stripe Test Account
+
+Go to Stripe Dashboard and sign up or log in.
+
+Switch to Test Mode.
+
+Go to the Developers > API Keys section.
+
+Copy the Publishable Key and Secret Key (both are test keys prefixed with pk*test*... and sk*test*...).
+
+2. Enable Stripe Connect (Express)
+
+In the Dashboard, go to Settings, Connect Settings.
+
+Click Get started and choose Express account type.
+
+3. Add Stripe Key to Frontend .env
+
+In your frontend project directory.
+
+Create or open the .env file.
+
+## Use these card number for testing.
+
+Purpose Card Number
+Payment succeeds 4242 4242 4242 4242
+Card declined 4000 0000 0000 9995
+
 ## Available Scripts
 
 In the project directory, you can run:

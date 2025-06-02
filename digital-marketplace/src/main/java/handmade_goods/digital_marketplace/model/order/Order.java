@@ -22,10 +22,13 @@ public class Order {
     private Double amount = 0.0;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20)
     private OrderStatus status;
 
     public enum OrderStatus {
         PENDING,
+        SUCCESS,
+        FAILED,
         SHIPPED,
         DELIVERED,
         CANCELLED

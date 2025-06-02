@@ -121,7 +121,7 @@ const Profile = () => {
             <div className="profile-container">
                 <div className="profile-header">
                     <h2>User Profile</h2>
-                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                    {/*<button onClick={handleLogout} className="logout-btn">Logout</button>*/}
                 </div>
                 
                 <div className="profile-content">

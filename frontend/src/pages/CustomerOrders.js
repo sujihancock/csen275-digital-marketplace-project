@@ -29,7 +29,7 @@ const CustomerOrders = () => {
             {orders && orders.length > 0 ? (
                 orders.map((order) => (
                     <div className="customer-order" key={order.id}>
-                        <h4>Order #{order.id} - {new Date(order.date).toLocaleDateString()}</h4>
+                        <h4>Order #{order.id} - {new Date(order.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</h4>
                         <h5>Buyer: {order.buyer.username}</h5>
                         <h5>Total: ${order.amount.toFixed(2)}</h5>
                         <h5>Status:  {order.status}</h5>

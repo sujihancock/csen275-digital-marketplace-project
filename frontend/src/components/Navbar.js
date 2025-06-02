@@ -14,9 +14,9 @@ const Navbar = () => {
     const handleLogout = async () => {
         await logout();
         // If user is on manage-products page, redirect to profile page
-        if (location.pathname === '/manage-products') {
-            navigate('/profile');
-        }
+        //if (location.pathname === '/*') {
+            navigate('/home');
+       // }
     };
 
     const handleCartClick = () => {
