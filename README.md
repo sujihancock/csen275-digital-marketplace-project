@@ -49,9 +49,7 @@ Frontend:
   - create .env file in the following format:
     (detailed instructions in the frontend/README.md)
     ```
-    REACT*APP_STRIPE_PUBLIC_KEY=pk_test*...
-    ```
-
+    REACT_APP_STRIPE_PUBLIC_KEY=pk_test...
     ```
 - ```bash
    npm start
