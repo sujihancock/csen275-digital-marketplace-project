@@ -81,8 +81,14 @@ public class SellerService {
         sellerReviewRepository.save(new SellerReview(review.comment(), review.rating(), review.date(), buyer, seller));
     }
 
-    public List<SellerReview.Dto> getReviews(Seller seller) {
-       return seller.getReviews().stream().map(SellerReview::convertToDto).toList();
+    @Transactional
+    public List<SellerReview.Dto> getReviews(Long sellerId) {
+        Seller seller = sellerRepository.findById(sellerId)
+                .orElseThrow(() -> new RuntimeException("Seller not found"));
+
+        return seller.getReviews().stream()
+                .map(SellerReview::convertToDto)
+                .toList();
     }
 
     public List<Product.Dto> getProducts(Seller seller) {

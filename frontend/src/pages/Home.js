@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import CheckoutButton from '../components/CheckoutButton';
 import AddToCartButton from '../components/AddToCartButton';
 import SearchBar from '../components/SearchBar';
 import { useUser } from '../context/UserContext';
