@@ -51,16 +51,18 @@ const Product = () => {
                     </Link>
                 </h4>
                 <h4>In Stock: {product.quantity}</h4>
-                <div className="product-buttons">
+                <div className="review-button-container">
                     {isAuthenticated && user?.role === 'buyer' && (
                         <AddToCartButton product={product} />
                     )}
                 </div>
                 <p>{product.description}</p>
                 <h4>Reviews:</h4>
-                <Link to={`/products/${id}/add-review`}>
-                    <button className="action-btn">Leave a Review</button>
-                </Link>
+                <div className="center-review-btn">
+                    <Link to={`/products/${id}/add-review`}>
+                        <button className="action-btn">Leave a Review</button>
+                    </Link>
+                </div>
                 {product.reviews && product.reviews.length > 0 ? (
                     product.reviews.map((review) => (
                         <div className="review-container" key={review.id}>

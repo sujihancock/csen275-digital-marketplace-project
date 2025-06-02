@@ -4,6 +4,7 @@ import AddToCartButton from '../components/AddToCartButton';
 import SearchBar from '../components/SearchBar';
 import { useUser } from '../context/UserContext';
 import { Link } from 'react-router-dom';
+import CheckoutButton from "../components/CheckoutButton";
 import { products } from '../services/api';
 
 

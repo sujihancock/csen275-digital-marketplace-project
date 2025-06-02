@@ -24,7 +24,7 @@ function ViewReviews() {
 
     return (
         <div>
-        <h4>Your Reviews</h4>
+        <h2>Your Reviews</h2>
         {reviews && reviews.length > 0 ? (
             reviews.map((review) => (
                 <div className="review-container" key={review.id}>

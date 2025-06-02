@@ -23,7 +23,7 @@ function SearchBar({ onSearch, selectedCategories, setSelectedCategories }) {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Search products..."
                 />
-                <button type="submit">Search</button>
+                <button type="submit" className="search-btn">Search</button>
             </form>
         </div>
     );

@@ -134,7 +134,7 @@
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s;
-  width: 100%;
+  width: fit-content;
 }
 
 .signup-btn:hover, .signin-btn:hover {
@@ -299,6 +299,7 @@
   margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.5rem;
 }
 
@@ -324,6 +325,7 @@
 
 .buyer-section .action-btn {
   background-color: #27ae60;
+  align-self: center;
 }
 
 .buyer-section .action-btn:hover {
@@ -508,6 +510,24 @@
   flex-direction: column;
   gap: 0.5rem;
   margin-top: 1rem;
+  text-decoration: none;
+}
+
+.product-buttons button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.product-buttons button:hover:not(:disabled) {
+  background-color: #2980b9;
+  transform: translateY(-2px);
 }
 
 /* Add to Cart Button */
@@ -517,6 +537,13 @@
   flex-direction: column;
   gap: 0.75rem;
 }
+
+.center-review-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
 
 /* Quantity Selector for AddToCartButton */
 .quantity-selector {
@@ -605,11 +632,12 @@
   font-size: 0.9rem;
   font-weight: bold;
   transition: all 0.3s;
-  width: 100%;
-  display: flex;
+  width: auto;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  align-self: center;
 }
 
 .add-to-cart-btn:hover {
@@ -945,34 +973,34 @@
     width: 95%;
     max-height: 90vh;
   }
-  
+
   .cart-item {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
   }
-  
+
   .item-controls {
     align-items: center;
   }
-  
+
   .cart-actions {
     flex-direction: column;
   }
-  
+
   .product-buttons {
     flex-direction: column;
   }
-  
+
   .navbar {
     padding: 1rem;
   }
-  
+
   .links {
     flex-wrap: wrap;
     gap: 0.5rem;
   }
-  
+
   .products-list {
     grid-template-columns: 1fr;
   }
@@ -1158,15 +1186,15 @@
     margin: 1rem;
     padding: 1.5rem;
   }
-  
+
   .add-product-container h2 {
     font-size: 1.5rem;
   }
-  
+
   .add-product-form {
     gap: 1.25rem;
   }
-  
+
   .add-product-btn {
     padding: 0.875rem 1.5rem;
     font-size: 1rem;
@@ -1526,21 +1554,21 @@
     margin: 1rem;
     padding: 0 1rem;
   }
-  
+
   .manage-header {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
   }
-  
+
   .products-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .product-actions,
   .edit-actions {
     flex-direction: column;
@@ -1551,7 +1579,7 @@
   .manage-header {
     padding: 1rem;
   }
-  
+
   .product-view,
   .product-edit-form {
     padding: 1rem;
@@ -1562,32 +1590,31 @@
 .form-buttons {
     display: flex;
     gap: 1rem;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 1.5rem;
 }
 
-/* Cancel button */
 .cancel-btn {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    font-weight: 500;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 500;
 }
 
 .cancel-btn:hover:not(:disabled) {
-    background-color: #5a6268;
-    transform: translateY(-1px);
+  background-color: #5a6268;
+  transform: translateY(-1px);
 }
 
 .cancel-btn:disabled {
-    background-color: #c6c6c6;
-    cursor: not-allowed;
-    transform: none;
+  background-color: #c6c6c6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .add-product-btn {
@@ -1682,7 +1709,7 @@
     margin: 1rem;
     padding: 1.5rem;
   }
-  
+
   .payment-container button[type="submit"] {
     width: 100%;
   }
@@ -1698,4 +1725,205 @@
 .seller-details {
   display: flex;
   justify-content: space-evenly;
+}
+
+/*removes underline from words in a button*/
+a, button {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/*styling for search button*/
+.search-container form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap; /* Optional: wrap on small screens */
+}
+
+.search-container input[type="text"] {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-btn:hover {
+  background-color: #2980b9;
+}
+
+.add-review {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.add-review h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.add-review form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-review textarea {
+  resize: vertical;
+  min-height: 100px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.add-review label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.add-review select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
+.add-review button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-review button:hover {
+  background-color: #2980b9;
+}
+
+.add-review div {
+  text-align: center;
+  color: #2c3e50;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+/*styling for order history*/
+.order-history {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: sans-serif;
+}
+
+.order-history h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.order-summary {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+
+.order-summary h3,
+.order-summary h4 {
+  margin: 0.5rem 0;
+}
+
+.order-summary a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.order-summary a:hover {
+  text-decoration: underline;
+}
+
+/*styling for the reviews for the seller*/
+.review-container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem auto;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+  max-width: 700px;
+}
+
+.review-container h5 {
+  margin: 0.3rem 0;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.review-container p {
+  margin: 0.5rem 0;
+  line-height: 1.4;
+  color: #333;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 2rem;
+  color: #2c3e50;
+}
+
+/*styling for order history for the seller*/
+.orders-container{
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+}
+
+.orders-container h3 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.customer-order {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.customer-order h4,
+.customer-order h5 {
+  margin: 0.4rem 0;
 }
