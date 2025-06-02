@@ -53,7 +53,8 @@ public class StripeController {
             }
             
             Long currentOrderId = (Long) httpSession.getAttribute("currentOrderId");
-            Map<String, Double> paymentsBySeller = buyerService.calculatePaymentsToSellers(buyer.getCart());
+            // Use persistent cart for payment calculation (same data source as order creation)
+            Map<String, Double> paymentsBySeller = buyerService.calculatePaymentsToSellersFromPersistentCart(buyer);
             return ResponseEntity.ok(ApiResponse.success(stripeService.handleCheckOut(paymentsBySeller, buyer, currentOrderId)));
         } catch (RuntimeException | StripeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));

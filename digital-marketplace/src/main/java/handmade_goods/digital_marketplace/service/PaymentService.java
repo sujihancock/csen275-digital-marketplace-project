@@ -28,6 +28,25 @@ public class PaymentService {
 
     @Transactional
     public Payment createPaymentForOrder(Order order, String stripePaymentIntentId, Double amount) {
+        System.out.println("=== CREATING PAYMENT RECORD ===");
+        System.out.println("Order ID: " + order.getId());
+        System.out.println("Transaction ID: " + stripePaymentIntentId);
+        System.out.println("Amount: " + amount);
+        
+        // Check if a payment with this transaction ID already exists
+        Optional<Payment> existingPayment = paymentRepository.findByTransactionId(stripePaymentIntentId);
+        if (existingPayment.isPresent()) {
+            System.out.println("Payment with transaction ID already exists: " + stripePaymentIntentId);
+            return existingPayment.get();
+        }
+        
+        // Check existing payments for this order
+        List<Payment> existingPaymentsForOrder = paymentRepository.findAllByOrderId(order.getId());
+        System.out.println("Existing payments for order " + order.getId() + ": " + existingPaymentsForOrder.size());
+        for (Payment p : existingPaymentsForOrder) {
+            System.out.println("  - Payment ID: " + p.getid() + ", Transaction: " + p.getTransactionId() + ", Amount: " + p.getAmount());
+        }
+        
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setTransactionId(stripePaymentIntentId);
@@ -36,7 +55,33 @@ public class PaymentService {
         payment.setPaymentMethod(Payment.PaymentMethod.CREDIT_CARD);
         payment.setPaymentDate(LocalDateTime.now());
         
-        return paymentRepository.save(payment);
+        try {
+            Payment savedPayment = paymentRepository.save(payment);
+            System.out.println("Payment record created successfully with ID: " + savedPayment.getid());
+            return savedPayment;
+        } catch (Exception e) {
+            System.err.println("ERROR creating payment record: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to create payment record: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Check if all payments for an order are completed
+     * @param order the order to check
+     * @return true if all payments for this order are completed
+     */
+    private boolean areAllPaymentsCompletedForOrder(Order order) {
+        List<Payment> allPaymentsForOrder = paymentRepository.findAllByOrderId(order.getId());
+        
+        // If no payments exist, return false
+        if (allPaymentsForOrder.isEmpty()) {
+            return false;
+        }
+        
+        // Check if all payments are completed
+        return allPaymentsForOrder.stream()
+                .allMatch(payment -> payment.getPaymentStatus() == Payment.PaymentStatus.COMPLETED);
     }
 
     /**
@@ -59,26 +104,36 @@ public class PaymentService {
         System.out.println("Payment status updated to COMPLETED");
         
         try {
-            // Also update the order status
             Order order = payment.getOrder();
-            if (order != null && order.getStatus() == Order.OrderStatus.PENDING) {
-                System.out.println("Updating order status from PENDING to SUCCESS");
-                order.setStatus(Order.OrderStatus.SUCCESS);
-                orderRepository.save(order);
-                System.out.println("Order status updated to SUCCESS");
+            if (order != null) {
+                System.out.println("Checking if all payments are completed for order: " + order.getId());
                 
-                // NEW: Reduce inventory after successful payment
-                try {
-                    inventoryService.reduceInventoryForOrder(order);
-                    System.out.println("Inventory successfully reduced for order: " + order.getId());
-                } catch (Exception e) {
-                    System.err.println("ERROR: Failed to reduce inventory for order " + order.getId() + ": " + e.getMessage());
-                    // Log the error but don't fail the payment - inventory reduction is separate concern
-                    // In production, you might want to implement compensation logic or manual intervention
+                // Only update order status and reduce inventory when ALL payments for this order are completed
+                if (areAllPaymentsCompletedForOrder(order)) {
+                    System.out.println("All payments completed for order " + order.getId() + ". Updating order status...");
+                    
+                    if (order.getStatus() == Order.OrderStatus.PENDING) {
+                        System.out.println("Updating order status from PENDING to SUCCESS");
+                        order.setStatus(Order.OrderStatus.SUCCESS);
+                        orderRepository.save(order);
+                        System.out.println("Order status updated to SUCCESS");
+                        
+                        // Reduce inventory after successful payment completion of entire order
+                        try {
+                            inventoryService.reduceInventoryForOrder(order);
+                            System.out.println("Inventory successfully reduced for order: " + order.getId());
+                        } catch (Exception e) {
+                            System.err.println("ERROR: Failed to reduce inventory for order " + order.getId() + ": " + e.getMessage());
+                            // Log the error but don't fail the payment - inventory reduction is separate concern
+                        }
+                    } else {
+                        System.out.println("Order is not in PENDING status. Current status: " + order.getStatus());
+                    }
+                } else {
+                    System.out.println("Not all payments completed yet for order " + order.getId() + ". Order status remains PENDING.");
                 }
             } else {
-                System.out.println("Order is null or not in PENDING status. Current status: " + 
-                    (order != null ? order.getStatus() : "null"));
+                System.out.println("Order is null for payment: " + transactionId);
             }
         } catch (Exception e) {
             System.err.println("Error updating order status: " + e.getMessage());
@@ -121,7 +176,7 @@ public class PaymentService {
     }
 
     public List<Payment> getPaymentsByOrderId(Long orderId) {
-        return paymentRepository.findByOrderId(orderId).stream().toList();
+        return paymentRepository.findAllByOrderId(orderId);
     }
 
     public Optional<Payment> getPaymentByTransactionId(String transactionId) {
