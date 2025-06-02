@@ -1069,31 +1069,28 @@
   background-color: #27ae60;
   color: white;
   border: none;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 1rem;
-  position: relative;
+  transition: all 0.3s ease;
+  min-width: 120px;
 }
 
 .add-product-btn:hover:not(:disabled) {
   background-color: #219a52;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+  transform: translateY(-1px);
 }
 
 .add-product-btn:disabled {
   background-color: #95a5a6;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
 .add-product-btn.submitting {
-  background-color: #f39c12;
+  background-color: #95a5a6;
 }
 
 .add-product-btn.submitting::after {
@@ -1478,25 +1475,27 @@
 }
 
 .cancel-btn {
-  background-color: #95a5a6;
+  background-color: #6c757d;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: bold;
-  transition: background-color 0.3s;
-  flex: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
 }
 
 .cancel-btn:hover:not(:disabled) {
-  background-color: #7f8c8d;
+  background-color: #5a6268;
+  transform: translateY(-1px);
 }
 
 .cancel-btn:disabled {
-  background-color: #bdc3c7;
+  background-color: #c6c6c6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .dismiss-btn {
@@ -1566,42 +1565,32 @@
     margin-top: 1.5rem;
 }
 
-/* Cancel button */
-.cancel-btn {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    font-weight: 500;
-}
-
-.cancel-btn:hover:not(:disabled) {
-    background-color: #5a6268;
-    transform: translateY(-1px);
-}
-
-.cancel-btn:disabled {
-    background-color: #c6c6c6;
-    cursor: not-allowed;
-    transform: none;
-}
-
 .add-product-btn {
     background-color: #27ae60;
     color: white;
     border: none;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 1rem;
-    position: relative;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.add-product-btn:hover:not(:disabled) {
+    background-color: #219a52;
+    transform: translateY(-1px);
+}
+
+.add-product-btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.add-product-btn.submitting {
+    background-color: #95a5a6;
 }
 
 .payment-container {
