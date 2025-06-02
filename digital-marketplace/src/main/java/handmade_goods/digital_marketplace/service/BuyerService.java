@@ -87,12 +87,43 @@ public class BuyerService {
         }
 
         Product product = productOpt.get();
+        
+        // NEW: Business logic validation - buyer cannot purchase their own products
+        if (product.getSeller() != null && 
+            product.getSeller().getId().equals(buyer.getId())) {
+            throw new RuntimeException("You cannot purchase your own products");
+        }
+        
+        // NEW: Check if product has sufficient stock
+        if (product.getQuantity() == null || product.getQuantity() <= 0) {
+            throw new RuntimeException("Product is out of stock");
+        }
+        
+        // NEW: Calculate total quantity that would be in cart after addition
         Optional<CartItem> existingCartItem = cartItemRepository.findByBuyerAndProduct(buyer, product);
+        int currentCartQuantity = existingCartItem.map(CartItem::getQuantity).orElse(0);
+        int requestedTotalQuantity = currentCartQuantity + cartRequest.quantity();
+        
+        // NEW: Validate that requested quantity doesn't exceed available stock
+        if (requestedTotalQuantity > product.getQuantity()) {
+            int maxAdditional = product.getQuantity() - currentCartQuantity;
+            if (maxAdditional <= 0) {
+                throw new RuntimeException("Cannot add more items. You already have the maximum available quantity in your cart");
+            } else {
+                throw new RuntimeException("Only " + maxAdditional + " more item(s) can be added. Available stock: " + product.getQuantity() + ", currently in cart: " + currentCartQuantity);
+            }
+        }
+
+        // NEW: Validate quantity limits (reasonable upper bound)
+        if (requestedTotalQuantity > 100) {
+            throw new RuntimeException("Cannot add more than 100 items of the same product to cart");
+        }
 
         if (existingCartItem.isPresent()) {
             // Update existing cart item quantity
             CartItem cartItem = existingCartItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + cartRequest.quantity());
+            cartItem.setQuantity(requestedTotalQuantity);
+            cartItem.setUpdatedAt(java.time.LocalDateTime.now());
             cartItemRepository.save(cartItem);
         } else {
             // Create new cart item

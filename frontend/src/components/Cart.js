@@ -32,15 +32,16 @@ const Cart = ({ isOpen, onClose }) => {
 
         setCheckingOut(true);
         try {
-            // Use the backend's Stripe checkout endpoint
+            // Create the order FIRST so we have an order ID for payment linking
+            const orderResponse = await orders.saveOrder();
+            if (orderResponse && orderResponse.data.status === 'error') {
+                 throw new Error('Failed to set up order');
+            }
+
+            // Then use the backend's Stripe checkout endpoint (which can now link payments to the order)
             const response = await payment.checkout();
             
             if (response.data.status === 'success') {
-                const orderResponse = await orders.saveOrder();
-                if (orderResponse && orderResponse.data.status === 'error') {
-                     throw new Error('Failed to set up order');
-                }
-
                 const paymentData = response.data.data;
 
                 if (paymentData && Object.keys(paymentData).length > 0) {

@@ -25,14 +25,14 @@ public class OrderService {
         this.cartItemRepository = cartItemRepository;
     }
 
-    public void convertCartToOrder(Buyer buyer) {
+    public Order convertCartToOrder(Buyer buyer) {
         Order order = new Order(LocalDateTime.now(ZoneId.systemDefault()), Order.OrderStatus.PENDING, buyer);
 
         List<CartItem> cartItems = cartItemRepository.findByBuyer(buyer);
         for (CartItem cartItem : cartItems) {
             order.addOrderItem(cartItem.getProduct(), cartItem.getQuantity());
         }
-        orderRepository.save(order);
+        return orderRepository.save(order);
     }
 
     public List<Order.Summary> getOrderHistory(Buyer buyer) {

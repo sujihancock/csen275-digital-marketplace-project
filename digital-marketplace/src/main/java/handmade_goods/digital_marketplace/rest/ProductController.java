@@ -26,6 +26,18 @@ public class ProductController {
     }
 
     /**
+     * Get all products for home page display
+     *
+     * @return a list of all products with basic info (id, name, price, image url, quantity)
+     **/
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<Product.Summary>>> getAllProducts() {
+        // Create an empty search request to get all products
+        SearchRequest emptySearch = new SearchRequest(List.of(), List.of());
+        return ResponseEntity.ok(ApiResponse.success(productService.search(emptySearch)));
+    }
+
+    /**
      * Get all products based on search by keywords and/or categories
      *
      * @param searchRequest contains an array of keywords and an array of categories

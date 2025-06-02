@@ -12,6 +12,8 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByBuyer(Buyer buyer);
+    
+    List<Order> findByBuyerAndStatus(Buyer buyer, Order.OrderStatus status);
 
     @Query("SELECT DISTINCT o " +
             "FROM Order o " +

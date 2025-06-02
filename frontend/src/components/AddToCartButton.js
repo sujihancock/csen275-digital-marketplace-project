@@ -9,6 +9,10 @@ const AddToCartButton = ({ product }) => {
     const { addToCart, error } = useCart();
     const { user, isAuthenticated } = useUser();
 
+    // Check if product is out of stock
+    const isOutOfStock = !product.quantity || product.quantity === 0;
+    const availableStock = product.quantity || 0;
+    
     const handleAddToCart = async () => {
         // Check if user is logged in and is a buyer
         if (!isAuthenticated) {
@@ -19,6 +23,20 @@ const AddToCartButton = ({ product }) => {
 
         if (user?.role !== 'buyer') {
             setMessage('Only buyers can add items to cart');
+            setTimeout(() => setMessage(''), 3000);
+            return;
+        }
+
+        // NEW: Check if product is out of stock
+        if (isOutOfStock) {
+            setMessage('This product is out of stock');
+            setTimeout(() => setMessage(''), 3000);
+            return;
+        }
+
+        // NEW: Validate quantity against available stock
+        if (quantity > availableStock) {
+            setMessage(`Only ${availableStock} item(s) available in stock`);
             setTimeout(() => setMessage(''), 3000);
             return;
         }
@@ -50,11 +68,15 @@ const AddToCartButton = ({ product }) => {
 
     const handleQuantityChange = (e) => {
         const value = parseInt(e.target.value) || 1;
-        setQuantity(Math.max(1, Math.min(99, value)));
+        // NEW: Limit quantity to available stock
+        const maxQuantity = Math.min(99, availableStock);
+        setQuantity(Math.max(1, Math.min(maxQuantity, value)));
     };
 
     const incrementQuantity = () => {
-        setQuantity(prev => Math.min(99, prev + 1));
+        // NEW: Limit quantity to available stock
+        const maxQuantity = Math.min(99, availableStock);
+        setQuantity(prev => Math.min(maxQuantity, prev + 1));
     };
 
     const decrementQuantity = () => {
@@ -63,6 +85,17 @@ const AddToCartButton = ({ product }) => {
 
     return (
         <div className="add-to-cart-container">
+            {/* NEW: Stock information display */}
+            <div className="stock-info">
+                {isOutOfStock ? (
+                    <span className="out-of-stock-text">❌ Out of Stock</span>
+                ) : availableStock <= 5 ? (
+                    <span className="low-stock-text">⚠️ Only {availableStock} left in stock</span>
+                ) : (
+                    <span className="in-stock-text">✅ {availableStock} in stock</span>
+                )}
+            </div>
+            
             <div className="quantity-selector">
                 <label htmlFor={`quantity-${product.id}`}>Qty:</label>
                 <div className="quantity-input-group">
@@ -70,7 +103,7 @@ const AddToCartButton = ({ product }) => {
                         type="button"
                         onClick={decrementQuantity}
                         className="quantity-adjust-btn"
-                        disabled={quantity <= 1 || isAdding}
+                        disabled={quantity <= 1 || isAdding || isOutOfStock}
                     >
                         -
                     </button>
@@ -78,17 +111,17 @@ const AddToCartButton = ({ product }) => {
                         id={`quantity-${product.id}`}
                         type="number"
                         min="1"
-                        max="99"
+                        max={Math.min(99, availableStock)}
                         value={quantity}
                         onChange={handleQuantityChange}
                         className="quantity-input"
-                        disabled={isAdding}
+                        disabled={isAdding || isOutOfStock}
                     />
                     <button 
                         type="button"
                         onClick={incrementQuantity}
                         className="quantity-adjust-btn"
-                        disabled={quantity >= 99 || isAdding}
+                        disabled={quantity >= Math.min(99, availableStock) || isAdding || isOutOfStock}
                     >
                         +
                     </button>
@@ -96,10 +129,15 @@ const AddToCartButton = ({ product }) => {
             </div>
             <button 
                 onClick={handleAddToCart} 
-                disabled={isAdding}
-                className={`add-to-cart-btn ${isAdding ? 'adding' : ''}`}
+                disabled={isAdding || isOutOfStock}
+                className={`add-to-cart-btn ${isAdding ? 'adding' : ''} ${isOutOfStock ? 'out-of-stock' : ''}`}
             >
-                {isAdding ? 'Adding...' : `🛒 Add ${quantity > 1 ? `${quantity} ` : ''}to Cart`}
+                {isOutOfStock 
+                    ? '❌ Out of Stock' 
+                    : isAdding 
+                    ? 'Adding...' 
+                    : `🛒 Add ${quantity > 1 ? `${quantity} ` : ''}to Cart`
+                }
             </button>
             {message && (
                 <div className={`cart-message ${message.includes('Added') ? 'success' : 'error'}`}>

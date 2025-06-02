@@ -35,7 +35,15 @@ public class OrderController {
                 throw new RuntimeException("not logged in");
             }
 
-            orderService.convertCartToOrder(buyer);
+            // Clear any existing order session data to prevent reuse
+            httpSession.removeAttribute("currentOrderId");
+
+            Order savedOrder = orderService.convertCartToOrder(buyer);
+            // Store the order ID in session so it can be used for payment linking
+            httpSession.setAttribute("currentOrderId", savedOrder.getId());
+            
+            System.out.println("New order created with ID: " + savedOrder.getId());
+            
             return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("order saved"));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(e.getMessage()));

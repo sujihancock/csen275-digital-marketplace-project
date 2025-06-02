@@ -13,6 +13,7 @@ const api = axios.create({
 
 // Products API
 export const products = {
+    getAllProducts: () => api.get('/products'),
     getProduct: (id) => api.get(`/products/${id}`),
 };
 
@@ -38,6 +39,8 @@ export const cart = {
 // Payment API
 export const payment = {
     checkout: () => api.get('/payment/checkout'),
+    confirmPayment: (paymentIntentIds) => api.post('/payment/confirm-payment', paymentIntentIds),
+    failPayment: (paymentIntentIds) => api.post('/payment/fail-payment', paymentIntentIds),
     stripeLogin: () => api.get('/payment/stripe-login')
 };
 
