@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import AddToCartButton from '../components/AddToCartButton';
+//import CheckoutButton from '../components/CheckoutButton';
 import SearchBar from '../components/SearchBar';
 import { useUser } from '../context/UserContext';
 import { Link } from 'react-router-dom';
@@ -119,7 +120,7 @@ const Home = () => {
                                 {isAuthenticated && user?.role === 'buyer' && (
                                     <AddToCartButton product={product} />
                                 )}
-                                <CheckoutButton product={product} />
+                           {/* <CheckoutButton product={product} /> */}
                             </div>
                         </div>
                     ))

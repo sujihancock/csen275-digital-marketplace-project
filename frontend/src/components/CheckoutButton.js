@@ -4,7 +4,7 @@ function CheckoutButton({product}) {
   const handleCheckout = async () => {
     try {
       const item = {
-        name: product.title,
+        name: product.name,
         amount: Math.round(product.price * 100),
         quantity: 1,
         currency: 'usd',
