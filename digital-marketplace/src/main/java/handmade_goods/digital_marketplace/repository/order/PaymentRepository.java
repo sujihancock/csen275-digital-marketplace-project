@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,4 +16,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     
     @Query("SELECT p FROM Payment p WHERE p.order.id = :orderId")
     Optional<Payment> findByOrderId(@Param("orderId") Long orderId);
+    
+    @Query("SELECT p FROM Payment p WHERE p.order.id = :orderId")
+    List<Payment> findAllByOrderId(@Param("orderId") Long orderId);
 } 
