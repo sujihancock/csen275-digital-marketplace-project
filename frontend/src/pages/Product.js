@@ -58,11 +58,13 @@ const Product = () => {
                 </div>
                 <p>{product.description}</p>
                 <h4>Reviews:</h4>
+                {isAuthenticated && user?.role === 'buyer' && (
                 <div className="center-review-btn">
                     <Link to={`/products/${id}/add-review`}>
                         <button className="action-btn">Leave a Review</button>
                     </Link>
                 </div>
+                )}
                 {product.reviews && product.reviews.length > 0 ? (
                     product.reviews.map((review) => (
                         <div className="review-container" key={review.id}>
